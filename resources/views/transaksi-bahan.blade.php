@@ -1,4 +1,4 @@
-<x-layout>
+<x-app-layout>
     <x-slot:title>Transaksi Bahan</x-slot:title>
 
     <!-- ========================================== -->
@@ -112,4 +112,4 @@
         </div>
 
     </div>
-</x-layout>
+</x-app-layout>

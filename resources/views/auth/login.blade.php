@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masuk - Riska Sulam</title>
-    <!-- Memanggil Tailwind CSS via Vite bawaan Laravel 12 -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-white min-h-screen font-sans flex items-center justify-center m-0 p-0 overflow-x-hidden">
-
+<x-guest-layout>
+    
     <!-- Kontainer Utama: Bagi 2 Kolom (Kiri dan Kanan) -->
     <div class="w-full min-h-screen flex flex-col md:flex-row">
         
@@ -37,7 +28,6 @@
                     <span class="text-2xl lg:text-3.5xl font-semibold text-[#C49A2D] tracking-widest font-serif mt-2 leading-none">SULAM</span>
                 </div>
             </div>
-            
         </div>
 
         <!-- ================= SISI KANAN: FORM INPUT ================= -->
@@ -48,8 +38,11 @@
                 <h2 class="text-4xl font-bold text-[#1B432A] mb-2 tracking-tight">Masuk</h2>
                 <p class="text-gray-600 font-medium mb-8 text-sm lg:text-base">Masukkan Username dan Password untuk Masuk</p>
 
+                <!-- Session Status -->
+                <x-auth-session-status class="mb-4" :status="session('status')" />
+                
                 <!-- TAG FORM: Siap Pakai Untuk Backend -->
-                <form action="#" method="POST">
+                <form method="POST" action="{{ route('login') }}">
                     @csrf <!-- Keamanan Token Laravel -->
 
                     <!-- Input Box Username -->
@@ -57,12 +50,9 @@
                         <label for="username" class="block text-sm lg:text-base font-semibold text-gray-700 mb-2">Username</label>
                         <input type="text" name="username" id="username" value="{{ old('username') }}"
                                class="w-full px-4 py-3 rounded-xl border border-gray-400 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1B432A] focus:border-transparent transition duration-200"
-                               placeholder="" required>
-                        
-                        <!-- Validasi Error Username -->
-                        @error('username')
-                            <span class="text-red-600 text-xs mt-1 block font-medium">{{ $message }}</span>
-                        @enderror
+                               placeholder="Masukkan Username Anda" required>
+
+                        <x-input-error :messages="$errors->get('username')" class="text-red-600 text-xs mt-1 block font-medium" />
                     </div>
 
                     <!-- Input Box Password -->
@@ -71,7 +61,7 @@
                         <div class="relative">
                             <input type="password" name="password" id="password"
                                    class="w-full px-4 py-3 rounded-xl border border-gray-400 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1B432A] focus:border-transparent transition duration-200"
-                                   placeholder="" required>
+                                   placeholder="Masukkan Password Anda" required>
                             
                             <!-- Ikon Mata (Melihat/Sembunyi Password) -->
                             <div class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer text-gray-500 hover:text-[#1B432A]">
@@ -96,10 +86,7 @@
                     </button>
                 </form>
             </div>
-
         </div>
-
     </div>
 
-</body>
-</html>
+</x-guest-layout>
