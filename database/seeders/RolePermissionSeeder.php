@@ -62,13 +62,13 @@ class RolePermissionSeeder extends Seeder
         Permission::create(['name' => 'delete_user']);
         Permission::create(['name' => 'view_user']);
 
-        // Role Owner
-        $roleOwner = Role::create(['name' => 'Owner']);
-        $roleOwner->givePermissionTo(Permission::all());
+        // Role Admin
+        $roleAdmin = Role::create(['name' => 'Admin']);
+        $roleAdmin->givePermissionTo(Permission::all());
 
-        // Role Kasir
-        $roleKasir = Role::create(['name' => 'Kasir']);
-        $roleKasir->givePermissionTo([
+        // Role Karyawan
+        $roleKaryawan = Role::create(['name' => 'Karyawan']);
+        $roleKaryawan->givePermissionTo([
             'view_transaksi',
             'create_transaksi',
             'view_detail_transaksi',

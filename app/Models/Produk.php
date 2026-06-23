@@ -10,8 +10,7 @@ class Produk extends Model
     use HasFactory;
 
     protected $table = 'produk';
-
-    protected $primaryKey = 'id_produk';
+    protected $primaryKey = 'id_produk'; 
 
     protected $fillable = [
         'nm_produk',
@@ -25,19 +24,6 @@ class Produk extends Model
 
     public function kategori()
     {
-        return $this->belongsTo(
-            Kategori::class,
-            'id_kategori',
-            'id_kategori'
-        );
-    }
-
-    public function detailPreorder()
-    {
-        return $this->hasMany(
-            DetailPreorder::class,
-            'id_produk',
-            'id_produk'
-        );
+        return $this->belongsTo(Kategori::class, 'id_kategori', 'id_kategori');
     }
 }
