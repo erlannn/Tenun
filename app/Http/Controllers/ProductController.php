@@ -25,7 +25,7 @@ class ProductController extends Controller
             });
         })
         ->orderBy('id_produk', 'desc') 
-        ->paginate(10)
+        ->paginate(5)
         ->withQueryString();
 
         return view('produk.data-produk', compact('produk', 'search'));
