@@ -53,7 +53,8 @@
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                         Data Produk
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2.5 rounded-xl transition duration-200 font-medium text-sm text-gray-200 hover:bg-[#003628]">
+                    <a href="data-bahan" class="flex items-center px-4 py-2.5 rounded-xl transition duration-200 font-medium text-sm 
+                    {{ request()->is('data-bahan*') ? 'bg-[#DDAE3B] text-[#004D39]' : 'text-gray-200 hover:bg-[#003628]' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 0 012-2m0 0V5a2 0 012-2h6a2 0 012 2v2M7 7h10"/></svg>
                         Data Bahan
                     </a>
@@ -83,25 +84,20 @@
             <!-- Main Content Area -->
             <div class="flex-1 flex flex-col">
                 <!-- Top Bar for Mobile (Hamburger) -->
-                <header class="bg-white border-b border-gray-200 px-4 py-2 flex items-center md:hidden">
+                {{-- <header class="bg-white border-b border-gray-200 px-4 py-2 flex items-center md:hidden">
                     <button id="sidebarToggle" class="text-gray-600 focus:outline-none mr-2">
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
-                    
-                </header>
-                @isset($header)
-                    <header class="bg-white shadow">
-                        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            {{ $header }}
-                        </div>
-                    </header>
-                @endisset
-                <!-- Desktop Navbar with Sidebar Toggle -->
+                </header> --}}
                 <header class="bg-white border-b border-gray-200 px-4 py-2 flex items-center hidden md:flex">
-                    <button id="sidebarToggleDesktop" class="flex items-center px-3 py-2 bg-[#004D39] text-white rounded hover:bg-[#003628]" aria-label="Toggle Sidebar">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    </button>
+                    <button id="sidebarToggleDesktop" class="flex items-center px-3 py-2 bg-[#004D39] text-white rounded hover:bg-[#003628]" aria-label="Toggle Sidebar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+            <h2 class="ml-5 text-xl font-semibold text-gray-700">
+        {{ $title ?? '' }}
+    </h2>
                 </header>
+                
                 <main class="flex-1 p-8 bg-white overflow-y-auto">
                     {{ $slot }}
                 </main>
@@ -124,7 +120,6 @@
             sidebar.classList.toggle('md:hidden');
         }
     });
-    
 </script>
     </body>
 </html>

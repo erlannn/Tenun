@@ -8,6 +8,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
 Route::get('/dashboard', function () {
@@ -34,7 +35,12 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     // Delete
     Route::delete('/produk/{produk}', [ProductController::class, 'destroy'])->name('produk.destroy');
 
+
+    
+
 });
+
+
 
 require __DIR__.'/auth.php';
 ?>

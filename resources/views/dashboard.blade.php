@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot:title>Dashboard</x-slot:title>
     @php
         $totalTransaksiHariIni = 10;
         $totalPreorderActive = 5;
@@ -9,6 +10,8 @@
             ['nama' => 'Kain Satin Premium', 'sisa' => 'Sisa 3 m'],
         ];
     @endphp
+
+    
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
         <!-- Card 1: Total Transaksi -->
         <div class="bg-[#FAF6E9] p-6 rounded-xl shadow-md border border-gray-100/50 flex items-center space-x-4">
