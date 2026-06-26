@@ -4,17 +4,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
 Route::get('/', function () {
     return view('datang');
-=======
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-Route::get('/login', function () {
-    return view('auth.login');
->>>>>>> f4bd3b6827ec2d524ee8d2b5d73308683a4146cf
 });
 
 Route::get('/dashboard', function () {
