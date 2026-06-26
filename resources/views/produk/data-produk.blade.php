@@ -8,7 +8,7 @@
                 <a href="{{ route('produk.create') }}" class="bg-[#007BFF] hover:bg-blue-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg flex items-center transition duration-200 cursor-pointer shadow-sm">
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-                    </svg>`
+                    </svg>
                     Produk
                 </a>
                 <form method="GET" action="{{ route('data-produk') }}" class="relative">

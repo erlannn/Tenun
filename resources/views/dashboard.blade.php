@@ -75,7 +75,6 @@
             </div>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('dashboardChart').getContext('2d');

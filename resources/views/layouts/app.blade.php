@@ -124,6 +124,7 @@
             sidebar.classList.toggle('md:hidden');
         }
     });
+    
 </script>
     </body>
 </html>
