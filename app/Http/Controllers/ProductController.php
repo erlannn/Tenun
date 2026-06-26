@@ -31,6 +31,25 @@ class ProductController extends Controller
         return view('produk.data-produk', compact('produk', 'search'));
     }
 
+    public function welcome(Request $request)
+    {
+        $search = $request->input('search');
+
+        $katalogProduk = Produk::with('kategori')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('nm_produk', 'like', "%{$search}%")
+                          ->orWhereHas('kategori', function ($queryKategori) use ($search) {
+                              $queryKategori->where('nm_kategori', 'like', "%{$search}%");
+                          });
+                });
+            })
+            ->orderBy('id_produk', 'desc') 
+            ->get(); 
+
+        return view('welcome', compact('katalogProduk', 'search'));
+    }
+
     public function create()
     {
         $kategori = Kategori::orderBy('nm_kategori', 'asc')->get();
@@ -44,9 +63,23 @@ class ProductController extends Controller
             'nm_produk'   => 'required|string|max:255',
             'id_kategori' => 'required|exists:kategori,id_kategori', 
             'harga'       => 'required|numeric',
+            'foto'        => 'nullable|image|mimes:png|max:2048', 
         ]);
 
+        // Proses upload foto
+        if ($request->hasFile('foto')) {
+            // 1. Buat nama unik untuk foto (contoh hasil: 1719400000.png)
+            $fotoName = time() . '.' . $request->file('foto')->getClientOriginalExtension();
+            
+            // 2. Pindahkan file fisik foto ke folder public/images/produk
+            $request->file('foto')->move(public_path('images/produk'), $fotoName);
+            
+            // 3. Simpan HANYA NAMA FOTONYA saja ke database
+            $validated['foto'] = $fotoName;
+        }
+
         Produk::create($validated);
+
         return redirect()->route('data-produk')->with('success', 'Produk berhasil ditambahkan.');
     }
 

@@ -17,6 +17,8 @@ return new class extends Migration
 
             $table->decimal('harga', 10, 2);
 
+            $table->string('foto', 255)->nullable();
+
             $table->foreign('id_kategori')
                   ->references('id_kategori')
                   ->on('kategori')
