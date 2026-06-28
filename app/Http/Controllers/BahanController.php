@@ -84,10 +84,14 @@ class BahanController extends Controller
     /**
      * Menghapus data bahan dari database.
      */
-    // public function destroy(Bahan $bahan)
-    // {
-    //     $bahan->delete();
-
-    //     return redirect()->route('data-bahan')->with('success', 'Bahan berhasil dihapus!');
-    // }
+    public function destroy($bahan)
+    {
+        $bahan = Bahan::findOrFail($bahan);
+        
+        // if ($bahan->detailBahan()->exists()) {
+        //     return redirect()->route('data-bahan')->with('error', 'Bahan tidak dapat dihapus karena masih digunakan di detail_bahan!');
+        // }
+        $bahan->delete();
+        return redirect()->route('data-bahan')->with('success', 'Bahan berhasil dihapus!');
+    }
 }
