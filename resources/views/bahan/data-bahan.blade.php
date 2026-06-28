@@ -40,7 +40,7 @@
                         <td class="py-4 px-4 font-medium text-gray-500">{{ $bahan->firstItem() + $index }}</td>
                         <td class="py-4 px-4 font-medium text-slate-700">{{ $item->nm_bahan }}</td>
                         <td class="py-4 px-4 text-slate-500">{{ $item->stok }}</td>
-                        <td class="py-4 px-4 text-slate-500">{{ $item->satuan ?? '-' }}</td>
+                        <td class="py-4 px-4 text-slate-500">{{ $item->satuan->nm_satuan ?? '-' }}</td>
                         <td class="py-4 px-4 font-medium text-gray-700">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
                         <td class="py-4 px-4 text-center">
                             <div class="flex items-center justify-center space-x-2">

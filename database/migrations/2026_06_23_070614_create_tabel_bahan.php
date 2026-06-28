@@ -10,6 +10,10 @@ return new class extends Migration
     {
         Schema::create('bahan', function (Blueprint $table) {
             $table->id('id_bahan');
+            $table->foreignId('id_satuan')
+                ->references('id_satuan')
+                ->on('satuan')
+                ->onDelete('cascade');
             $table->string('nm_bahan', 100);
             $table->decimal('harga', 10, 2);
             $table->integer('stok')->default(0);
