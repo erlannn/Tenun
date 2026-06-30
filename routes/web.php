@@ -9,6 +9,17 @@ Route::get('/', function () {
 });
 
 
+
+
+Route::get('/transaksi-preorder', function () {
+    return view('preorder.transaksi-preorder');
+});
+
+Route::get('/create', function () {
+    return view('preorder.create');
+});
+  
+
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
 Route::get('/dashboard', function () {
