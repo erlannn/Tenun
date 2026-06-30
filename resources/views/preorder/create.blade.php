@@ -10,7 +10,6 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start max-w-[1400px] mx-auto">
-        
         <div class="lg:col-span-5 bg-white rounded-xl shadow-md border border-gray-100 p-6 space-y-5">
             <form id="formPreorder" method="POST" action="#">
                 @csrf
@@ -34,7 +33,7 @@
                             <option value="tas">Tas</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-1 h-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
                 </div>
@@ -49,7 +48,7 @@
                             <option value="tas">c</option>
                         </select>
                          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-600">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                            <svg class="w-1 h-1" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </div>
                     </div>
                 
