@@ -2,12 +2,8 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\BahanController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
 
 
 
@@ -18,17 +14,21 @@ Route::get('/transaksi-preorder', function () {
 Route::get('/create', function () {
     return view('preorder.create');
 });
-  
+
+Route::get('/laporan', function () {
+    return view('laporan');
+})->name('laporan');
+
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 Route::get('/transaksi-bahan', function () {
     return view('transaksi-bahan.transaksi-bahan');
-})->middleware(['auth', 'verified'])->name('transaksi-bahan');
+})->middleware(['auth'])->name('transaksi-bahan');
 
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -46,12 +46,12 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     // Delete
     Route::delete('/produk/{produk}', [ProductController::class, 'destroy'])->name('produk.destroy');
 
-
-    
-
+    Route::get('/data-bahan', [BahanController::class, 'index'])->name('data-bahan');
+    Route::get('/bahan/create', [BahanController::class, 'create'])->name('bahan.create');
+    Route::post('/bahan/store', [BahanController::class, 'store'])->name('bahan.store');
+    Route::get('/bahan/{bahan}/edit', [BahanController::class, 'edit'])->name('bahan.edit');
+    Route::put('/bahan/{bahan}', [BahanController::class, 'update'])->name('bahan.update');
+    Route::delete('/bahan/{bahan}', [BahanController::class, 'destroy'])->name('bahan.destroy');
 });
 
-
-
-require __DIR__.'/auth.php';
-?>
+require __DIR__ . '/auth.php';

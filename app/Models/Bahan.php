@@ -10,11 +10,11 @@ class Bahan extends Model
     use HasFactory;
 
     protected $table = 'bahan';
-
     protected $primaryKey = 'id_bahan';
 
     protected $fillable = [
         'nm_bahan',
+        'id_satuan',
         'harga',
         'stok',
     ];
@@ -29,6 +29,15 @@ class Bahan extends Model
             DetailBahan::class,
             'id_bahan',
             'id_bahan'
+        );
+    }
+
+    public function satuan()
+    {
+        return $this->belongsTo(
+            Satuan::class,
+            'id_satuan',
+            'id_satuan'
         );
     }
 }

@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden p-8 max-w-5xl mx-auto">
-        <form method="POST" action="{{ route('bahan.update', $bahan->id) }}" class="space-y-6">
+        <form method="POST" action="{{ route('bahan.update', $bahan->id_bahan) }}" class="space-y-6">
             @csrf
             @method('PUT')
 
@@ -31,12 +31,25 @@
                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
             </div>
-
             <div>
-                <label for="harga_satuan" class="block text-sm font-semibold text-gray-700 mb-2">Harga Satuan</label>
-                <input type="number" name="harga_satuan" id="harga_satuan" value="{{ old('harga_satuan', $bahan->harga_satuan ?? 80000) }}" 
-                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition @error('harga_satuan') border-red-500 @enderror">
-                @error('harga_satuan')
+                <label class="block text-sm font-medium text-gray-700">Satuan</label>
+                <select name="id_satuan" class="mt-1 w-full border-gray-300 rounded-lg focus:border-blue-500 focus:ring-blue-500 text-sm text-gray-600" required>
+                    <option value="" disabled >-- Pilih Satuan --</option>
+                    @foreach($satuan as $sat)
+                        <option value="{{ $sat->id_satuan }}" {{ old('id_satuan') == $sat->id_satuan ? 'selected' : '' }}>
+                            {{ $sat->nm_satuan }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('id_satuan')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label for="harga" class="block text-sm font-semibold text-gray-700 mb-2">Harga</label>
+                <input type="number" name="harga" id="harga" value="{{ old('harga', $bahan->harga ?? 80000) }}" 
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition @error('harga') border-red-500 @enderror">
+                @error('harga')
                     <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                 @enderror
             </div>
@@ -48,7 +61,7 @@
                 </a>
                 <button type="submit" 
                     class="px-8 py-2.5 bg-[#007BFF] hover:bg-blue-700 text-white font-medium text-sm rounded-xl transition duration-200 shadow-sm cursor-pointer">
-                    simpan
+                    Simpan
                 </button>
             </div>
         </form>

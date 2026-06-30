@@ -46,8 +46,8 @@
                     <p class="text-xs text-gray-500 mt-1">*Maksimal ukuran file 1MB dan harus berformat .png</p>
                 </div>
                 
-                <div class="flex justify-end space-x-3 mt-4">
-                    <a href="{{ route('data-produk') }}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Batal</a>
+                <div class="flex justify-center space-x-3 mt-4">
+                    <a href="{{ route('data-produk') }}" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 transition">Batal</a>
                     <button type="submit" class="px-4 py-2 bg-[#007BFF] text-white rounded-lg hover:bg-blue-700 transition">Simpan</button>
                 </div>
             </div>
