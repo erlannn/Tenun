@@ -17,7 +17,7 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 flex">
             {{-- Sidebar component --}}
-            <aside class="w-64 bg-[#004D39] text-white flex flex-col min-h-screen sticky top-0 shadow-xl hidden md:flex z-20">
+            <aside class="w-64 bg-[#004D39] text-white flex flex-col min-h-screen sticky top-0 shadow-xl  md:flex z-20">
                 <!-- Brand Area -->
                 <div class="pt-8 px-6 text-center">
                     <div class="flex items-center space-x-3 justify-center mb-6">
@@ -39,7 +39,7 @@
                         Dashboard
                     </a>
                     @role('Admin')
-                    <a href="#" class="flex items-center px-4 py-2.5 rounded-xl transition duration-200 font-medium text-sm text-gray-200 hover:bg-[#003628]">
+                    <a href="transaksi-preorder" class="flex items-center px-4 py-2.5 rounded-xl transition duration-200 font-medium text-sm {{ request()->is('transaksi-preorder') ? 'bg-[#DDAE3B] text-[#004D39]' : 'text-gray-200 hover:bg-[#003628]' }}">
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Transaksi Preorder
                     </a>
@@ -58,8 +58,8 @@
                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 0 012-2m0 0V5a2 0 012-2h6a2 0 012 2v2M7 7h10"/></svg>
                         Data Bahan
                     </a>
-                    <a href="#" class="flex items-center px-4 py-2.5 rounded-xl transition duration-200 font-medium text-sm text-gray-200 hover:bg-[#003628]">
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 0 002-2v-4a2 0 00-2-2H5a2 0 00-2 2v4a2 0 002 2h2m2 4h6a2 0 002-2v-4a2 0 00-2-2H9a2 0 00-2 2v4a2 0 002 2zm8-12V5a2 0 00-2-2H9a2 0 00-2 2v4h10z"/></svg>
+                    <a href="laporan" class="flex items-center px-4 py-2.5 rounded-xl transition duration-200 font-medium text-sm {{ request()->is('laporan') ? 'bg-[#DDAE3B] text-[#004D39]' : 'text-gray-200 hover:bg-[#003628]' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"> <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" /></svg>
                         Laporan
                     </a>
                     @endrole
