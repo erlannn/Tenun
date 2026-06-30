@@ -14,6 +14,7 @@ class TransaksiSeeder extends Seeder
             'tanggal_pesan' => now(),
             'tanggal_selesai' => now()->addDays(7),
             'jenis_transaksi' => 'PreOrder',
+            'status' => 'diproses',
         ]);
 
         Transaksi::create([
@@ -21,6 +22,7 @@ class TransaksiSeeder extends Seeder
             'tanggal_pesan' => now(),
             'tanggal_selesai' => now()->addDays(14),
             'jenis_transaksi' => 'PreOrder',
+            'status' => 'selesai',
         ]);
     }
 }

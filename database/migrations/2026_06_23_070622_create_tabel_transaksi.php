@@ -25,6 +25,11 @@ return new class extends Migration
                 'Bahan'
             ]);
 
+            $table->enum('status', [
+                'diproses',
+                'selesai'
+            ])->default('diproses');
+
             $table->timestamps();
         });
     }

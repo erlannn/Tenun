@@ -3,18 +3,12 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiBahanController;
+use App\Http\Controllers\TransaksiPreorderController;
 use App\Http\Controllers\BahanController;
 use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/transaksi-preorder', function () {
-    return view('preorder.transaksi-preorder');
-});
-
-Route::get('/create', function () {
-    return view('preorder.create');
-});
 
 Route::get('/laporan', function () {
     return view('laporan');
@@ -27,8 +21,13 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-Route::get('/transaksi-bahan', function () 
-{return view('transaksi-bahan.transaksi-bahan');})->middleware(['auth'])->name('transaksi-bahan');
+Route::get('/transaksi-bahan', [TransaksiBahanController::class, 'index'])->middleware(['auth'])->name('transaksi-bahan');
+
+Route::get('/transaksi-bahan/create', [TransaksiBahanController::class, 'create'])->middleware(['auth'])->name('transaksi-bahan.create');
+Route::post('/transaksi-bahan', [TransaksiBahanController::class, 'store'])->middleware(['auth'])->name('transaksi-bahan.store');
+Route::get('/transaksi-bahan/{id}', [TransaksiBahanController::class, 'show'])->middleware(['auth'])->name('transaksi-bahan.show');
+
+// Route::get('/transaksi-bahan/create', [TransaksiBahanController::class, 'create'])->name('transaksi-bahan.create');
 
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -52,6 +51,11 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/bahan/{bahan}/edit', [BahanController::class, 'edit'])->name('bahan.edit');
     Route::put('/bahan/{bahan}', [BahanController::class, 'update'])->name('bahan.update');
     Route::delete('/bahan/{bahan}', [BahanController::class, 'destroy'])->name('bahan.destroy');
+
+    Route::get('/transaksi-preorder', [TransaksiPreorderController::class, 'index'])->name('transaksi-preorder');
+    Route::get('/transaksi-preorder/create', [TransaksiPreorderController::class, 'create'])->name('transaksi-preorder.create');
+    Route::post('/transaksi-preorder/store', [TransaksiPreorderController::class, 'store'])->name('transaksi-preorder.store');
+    Route::patch('/transaksi-preorder/{id}/status', [TransaksiPreorderController::class, 'updateStatus'])->name('transaksi-preorder.updateStatus');
 });
 
 require __DIR__ . '/auth.php';
