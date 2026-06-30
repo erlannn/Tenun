@@ -40,4 +40,5 @@ class Bahan extends Model
             'id_satuan'
         );
     }
+
 }

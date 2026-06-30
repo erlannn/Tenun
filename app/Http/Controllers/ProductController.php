@@ -35,7 +35,7 @@ class ProductController extends Controller
     {
         $search = $request->input('search');
 
-        $katalogProduk = Produk::with('kategori')
+        $katalogProduk =Produk::with('kategori')
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($query) use ($search) {
                     $query->where('nm_produk', 'like', "%{$search}%")
@@ -45,7 +45,8 @@ class ProductController extends Controller
                 });
             })
             ->orderBy('id_produk', 'desc') 
-            ->get(); 
+            ->paginate(5)
+            ->withQueryString(); 
 
         return view('welcome', compact('katalogProduk', 'search'));
     }

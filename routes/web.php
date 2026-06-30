@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransaksiBahanController;
 use App\Http\Controllers\BahanController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,8 +11,13 @@ Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 Route::get('/dashboard', function () 
 {return view('dashboard');})->middleware(['auth'])->name('dashboard');
 
-Route::get('/transaksi-bahan', function () 
-{return view('transaksi-bahan.transaksi-bahan');})->middleware(['auth'])->name('transaksi-bahan');
+Route::get('/transaksi-bahan', [TransaksiBahanController::class, 'index'])->middleware(['auth'])->name('transaksi-bahan');
+
+Route::get('/transaksi-bahan/create', [TransaksiBahanController::class, 'create'])->middleware(['auth'])->name('transaksi-bahan.create');
+Route::post('/transaksi-bahan', [TransaksiBahanController::class, 'store'])->middleware(['auth'])->name('transaksi-bahan.store');
+Route::get('/transaksi-bahan/{id}', [TransaksiBahanController::class, 'show'])->middleware(['auth'])->name('transaksi-bahan.show');
+
+// Route::get('/transaksi-bahan/create', [TransaksiBahanController::class, 'create'])->name('transaksi-bahan.create');
 
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

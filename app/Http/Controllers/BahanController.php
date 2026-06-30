@@ -12,13 +12,18 @@ class BahanController extends Controller
     {
         $search = $request->input('search');
         
-        $bahan = Bahan::with('satuan')
-            ->when($search, function ($query, $search) {
-                $query->where('nm_bahan', 'like', "%{$search}%");
+        $bahan =Bahan::with('satuan')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->where('nm_bahan', 'like', "%{$search}%")
+                          ->orWhereHas('satuan', function ($querySatuan) use ($search) {
+                              $querySatuan->where('nm_satuan', 'like', "%{$search}%");
+                          });
+                });
             })
             ->orderBy('id_bahan', 'desc') 
             ->paginate(5)
-            ->withQueryString();
+            ->withQueryString(); 
 
         $bahan->getCollection()->transform(function ($item) {
             $item->harga_satuan = $item->harga; 
@@ -28,9 +33,6 @@ class BahanController extends Controller
         return view('bahan.data-bahan', compact('bahan', 'search'));
     }
 
-    /**
-     * Menampilkan form untuk membuat bahan baru.
-     */
     public function create()
     {
         $satuan = Satuan::orderBy('nm_satuan', 'asc')->get();
