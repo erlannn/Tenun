@@ -16,7 +16,7 @@
             </div>
             <div class="flex items-center space-x-6">
                 <a href="#" class="text-[#DDAE3B] font-semibold border-b-2 border-[#DDAE3B] pb-1 text-sm">Katalog Produk</a>
-                <a href="/login" class="bg-[#DDAE3B] hover:bg-[#C49A2D] text-[#004D39] font-bold text-xs px-4 py-2 rounded-lg transition duration-200 shadow-sm">Portal Admin</a>
+                <a href="/login" class="bg-[#DDAE3B] hover:bg-[#C49A2D] text-[#004D39] font-bold text-xs px-4 py-2 rounded-lg transition duration-200 shadow-sm">Login Admin</a>
             </div>
         </div>
     </nav>
@@ -48,7 +48,9 @@
                 <div>
                     <div class="h-56 bg-[#FAF6E9] relative border-b border-gray-100 overflow-hidden">
                         @if($produk->foto)
-                            <img src="{{ asset('images/produk/' . $produk->foto) }}" alt="{{ $produk->nm_produk }}" class="w-full h-full object-cover">
+                            <button type="button" class="catalog-image-trigger block w-full h-full overflow-hidden" data-image-src="{{ asset('images/produk/' . $produk->foto) }}" aria-label="Lihat foto {{ $produk->nm_produk }}">
+                                <img src="{{ asset('images/produk/' . $produk->foto) }}" alt="{{ $produk->nm_produk }}" class="w-full h-full object-cover cursor-zoom-in transition duration-300 ease-out hover:scale-105">
+                            </button>
                         @else
                             <img src="{{ asset('images/default-placeholder.png') }}" alt="No Image Available" class="w-full h-full object-cover opacity-60">
                         @endif
@@ -77,6 +79,15 @@
             @endforelse
         </div>
     </main>
+
+    <div id="catalogImageModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 p-4" role="dialog" aria-modal="true" aria-label="Pratinjau foto produk">
+        <div class="relative w-full max-w-5xl">
+            <button id="catalogImageModalClose" type="button" class="absolute -top-12 right-0 text-white text-3xl font-semibold hover:text-[#DDAE3B] transition" aria-label="Tutup foto">
+                &times;
+            </button>
+            <img id="catalogImageModalImg" src="" alt="Foto produk penuh" class="w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl">
+        </div>
+    </div>
 
     <footer class="bg-[#001A12] text-gray-400 py-8 px-6 text-center border-t border-gray-900 mt-20 text-xs">
         <p>&copy; 2026 Riska Sulam - Bukittinggi. All Rights Reserved.</p>
