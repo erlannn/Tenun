@@ -11,7 +11,6 @@
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "buildCommand": "npm install && npm run build",
-    "outputDirectory": "public",
     "env": {
         "APP_NAME":"RiskaSulam",
         "APP_ENV": "production",
