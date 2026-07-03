@@ -13,6 +13,8 @@ class KategoriSeeder extends Seeder
             ['nm_kategori' => 'Tas'],
             ['nm_kategori' => 'Dompet'],
             ['nm_kategori' => 'Aksesoris'],
+            ['nm_kategori' => 'Baju'],
+            ['nm_kategori' => 'Selempang'],
         ]);
     }
 }

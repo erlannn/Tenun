@@ -8,11 +8,19 @@ use App\Models\Produk;
 use App\Models\DetailTransaksi;
 use App\Models\Bahan;
 use App\Models\DetailBahan;
+use App\Services\WhatsappService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class TransaksiPreorderController extends Controller
 {
+    protected $whatsappService;
+
+    public function __construct(WhatsappService $whatsappService)
+    {
+        $this->whatsappService = $whatsappService;
+    }
     /**
      * List all preorder transactions with status filters and search bar.
      */
@@ -104,7 +112,7 @@ class TransaksiPreorderController extends Controller
             'jumlah_bahan'      => 'nullable|array',
         ]);
 
-        DB::transaction(function () use ($validated) {
+        $transaksi = DB::transaction(function () use ($validated) {
             // Find or create customer
             $pelanggan = Pelanggan::firstOrCreate(
                 ['nm_pelanggan' => $validated['nama']],
@@ -132,6 +140,15 @@ class TransaksiPreorderController extends Controller
             if (!empty($validated['bahan'])) {
                 foreach ($validated['bahan'] as $idBahan) {
                     $qtyBahan = isset($validated['jumlah_bahan'][$idBahan]) ? (int) $validated['jumlah_bahan'][$idBahan] : 1;
+                    $bahan = Bahan::find($idBahan);
+
+                    if (!$bahan) {
+                        throw new \RuntimeException('Bahan tidak ditemukan: ' . $idBahan);
+                    }
+
+                    if ($qtyBahan > (int) $bahan->stok) {
+                        throw new \RuntimeException('Stok bahan ' . $bahan->nm_bahan . ' tidak mencukupi.');
+                    }
 
                     DetailBahan::create([
                         'id_detail'    => $detailTrans->id_detail,
@@ -140,13 +157,81 @@ class TransaksiPreorderController extends Controller
                     ]);
 
                     // Decrement stock
-                    $bahan = Bahan::find($idBahan);
-                    if ($bahan) {
-                        $bahan->decrement('stok', $qtyBahan);
-                    }
+                    $bahan->decrement('stok', $qtyBahan);
                 }
             }
+
+            return $transaksi;
         });
+
+        $waSent = false;
+        $waError = null;
+
+        if ($transaksi && $transaksi->pelanggan && $transaksi->pelanggan->no_hp) {
+            try {
+                // Load complete relationships for the PDF
+                $transaksi->load(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.detailBahan.bahan']);
+
+                // Generate PDF
+                $pdfFilename = 'struk-preorder-' . $transaksi->id_transaksi . '.pdf';
+                $pdfDirectory = public_path('receipts');
+                if (!file_exists($pdfDirectory)) {
+                    mkdir($pdfDirectory, 0755, true);
+                }
+                $pdfPath = $pdfDirectory . '/' . $pdfFilename;
+
+                // Calculate total before rendering the PDF
+                $totalProduk = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
+                    return $carry + (($dt->produk->harga ?? 0) * $dt->jumlah);
+                }, 0);
+
+                $totalBahan = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
+                    return $carry + $dt->detailBahan->reduce(function ($subtotal, $detailBahan) {
+                        return $subtotal + (($detailBahan->bahan->harga ?? 0) * $detailBahan->jumlah_bahan);
+                    }, 0);
+                }, 0);
+
+                $totalAmount = $totalProduk + $totalBahan;
+
+                Pdf::view('preorder.receipt-pdf', [
+                    'transaksi' => $transaksi,
+                    'totalProduk' => $totalProduk,
+                    'totalBahan' => $totalBahan,
+                    'grandTotal' => $totalAmount,
+                ])
+                    ->save($pdfPath);
+
+                logger()->info('Generated preorder PDF for WhatsApp sending', [
+                    'transaksi_id' => $transaksi->id_transaksi,
+                    'pdf_path' => $pdfPath,
+                    'pdf_size' => file_exists($pdfPath) ? filesize($pdfPath) : null,
+                ]);
+
+                // Send PDF only without a text caption
+                $response = $this->whatsappService->sendFile($transaksi->pelanggan->no_hp, $pdfPath, $pdfFilename);
+
+                logger()->info('Fonnte response detail', $response);
+
+                if (isset($response['status']) && $response['status'] == true) {
+                    $waSent = true;
+                } else {
+                    $waError = $response['reason'] ?? 'Gagal mengirim berkas ke Fonnte';
+                    logger()->warning('WhatsApp PDF send failed', [
+                        'transaksi_id' => $transaksi->id_transaksi,
+                        'response' => $response,
+                    ]);
+                }
+            } catch (\Exception $e) {
+                logger()->error('Gagal mengirim WhatsApp struk preorder: ' . $e->getMessage());
+                $waError = $e->getMessage();
+            }
+        }
+
+        if ($waSent) {
+            return redirect()->route('transaksi-preorder')->with('success', 'Transaksi preorder berhasil disimpan dan struk berhasil dikirim ke WhatsApp!');
+        } elseif ($waError) {
+            return redirect()->route('transaksi-preorder')->with('success', 'Transaksi preorder berhasil disimpan, tetapi gagal mengirim WhatsApp: ' . $waError);
+        }
 
         return redirect()->route('transaksi-preorder')->with('success', 'Transaksi preorder berhasil disimpan!');
     }

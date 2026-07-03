@@ -17,5 +17,13 @@
         "postcss": "^8.4.31",
         "tailwindcss": "^3.4.19",
         "vite": "^7.0.7"
+    },
+    "dependencies": {
+        "package-lock.json": "^1.0.0",
+        "package.json": "^0.0.0",
+        "puppeteer": "^24.43.1"
+    },
+    "allowScripts": {
+        "puppeteer@24.43.1": true
     }
 }

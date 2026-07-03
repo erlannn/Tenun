@@ -8,7 +8,7 @@
         <div class="w-full md:w-1/2 bg-[#FAF6E9] flex flex-col items-center justify-center p-8 lg:p-16">
             
             <!-- Tulisan Selamat Datang -->
-       <h1 class="text-3xl lg:text-5xl font-extrabold text-[#1B432A] mb-12 tracking-wide text-center" style="-webkit-text-stroke: 1px #1B432A;">
+       <h1 class="text-3xl lg:text-5xl font-extrabold text-[#1B432A] mb-12 tracking-wide text-center">
     Selamat Datang!
 </h1>
             <!-- Kontainer Logo, Garis Pembatas, dan Teks Merk -->

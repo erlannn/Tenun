@@ -15,8 +15,7 @@
                 <span class="text-xl font-bold tracking-wide">Riska Sulam</span>
             </div>
             <div class="flex items-center space-x-6">
-                <a href="#" class="text-[#DDAE3B] font-semibold border-b-2 border-[#DDAE3B] pb-1 text-sm">Katalog Produk</a>
-                <a href="/login" class="bg-[#DDAE3B] hover:bg-[#C49A2D] text-[#004D39] font-bold text-xs px-4 py-2 rounded-lg transition duration-200 shadow-sm">Portal Admin</a>
+                <a href="/login" class="bg-[#DDAE3B] hover:bg-[#C49A2D] text-[#004D39] font-bold text-xs px-4 py-2 rounded-lg transition duration-200 shadow-sm">Masuk</a>
             </div>
         </div>
     </nav>
@@ -26,10 +25,12 @@
             <h1 class="text-3xl md:text-4xl font-extrabold mb-4">Koleksi Sulaman Tradisional Minang</h1>
             <p class="text-gray-200 text-sm md:text-base mb-8">Temukan keindahan seni sulam tangan autentik berkualitas premium untuk menyempurnakan momen berharga Anda.</p>
             <div class="max-w-md mx-auto relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </span>
-                <input type="text" placeholder="Cari produk impian Anda..." class="w-full pl-10 pr-4 py-3 bg-white text-gray-800 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DDAE3B] shadow-lg transition">
+                <form method="GET" action="{{ route('welcome') }}">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </span>
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Cari produk" class="w-full pl-10 pr-4 py-3 bg-white text-gray-800 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#DDAE3B] shadow-lg transition">
+                </form>
             </div>
         </div>
     </header>
@@ -50,7 +51,7 @@
                         @if($produk->foto)
                             <img src="{{ asset('images/produk/' . $produk->foto) }}" alt="{{ $produk->nm_produk }}" class="w-full h-full object-cover">
                         @else
-                            <img src="{{ asset('images/default-placeholder.png') }}" alt="No Image Available" class="w-full h-full object-cover opacity-60">
+                            <img src="{{ asset('images/sample/' . $produk->foto) }}" alt="{{ $produk->nm_produk }}" class="w-full h-full object-cover">
                         @endif
                         
                         <span class="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm 
@@ -75,6 +76,11 @@
                 <p class="text-gray-500">Belum ada produk yang tersedia saat ini.</p>
             </div>
             @endforelse
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-center mt-20">
+            {{ $katalogProduk->links() }}
         </div>
     </main>
 

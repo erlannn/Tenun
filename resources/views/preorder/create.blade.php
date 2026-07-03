@@ -93,7 +93,7 @@
                                 <tr>
                                     <td class="py-3 px-2 font-medium text-gray-700">
                                         <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" name="bahan[]" value="{{ $item->id_bahan }}" class="bahan-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-harga="{{ $item->harga }}" data-id="{{ $item->id_bahan }}">
+                                            <input type="checkbox" name="bahan[]" value="{{ $item->id_bahan }}" form="formPreorder" class="bahan-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-harga="{{ $item->harga }}" data-id="{{ $item->id_bahan }}">
                                             <span class="truncate max-w-[120px] inline-block">{{ $item->nm_bahan }}</span>
                                         </label>
                                     </td>
@@ -101,7 +101,7 @@
                                     <td class="py-3 px-4">
                                         <div class="flex items-center justify-center space-x-2">
                                             <button type="button" class="btn-minus text-gray-400 font-bold text-lg px-1 select-none cursor-pointer" data-id="{{ $item->id_bahan }}">-</button>
-                                            <input type="number" name="jumlah_bahan[{{ $item->id_bahan }}]" id="qty-{{ $item->id_bahan }}" value="1" min="1" max="{{ $item->stok }}" class="qty-input w-12 text-center border border-emerald-600 rounded p-0.5 text-xs text-gray-700 font-bold">
+                                            <input type="number" name="jumlah_bahan[{{ $item->id_bahan }}]" id="qty-{{ $item->id_bahan }}" value="1" min="1" max="{{ $item->stok }}" form="formPreorder" class="qty-input w-12 text-center border border-emerald-600 rounded p-0.5 text-xs text-gray-700 font-bold">
                                             <button type="button" class="btn-plus text-emerald-600 font-bold text-lg px-1 select-none cursor-pointer" data-id="{{ $item->id_bahan }}">+</button>
                                             <span class="text-gray-400 text-[11px] font-medium ml-1 truncate max-w-[30px] inline-block">{{ $item->satuan->nm_satuan ?? '' }}</span>
                                         </div>
@@ -138,7 +138,7 @@
                         <span class="font-semibold text-gray-700" id="total_bahan_display">Rp. 0</span>
                     </div>
                     <div class="flex justify-between items-center border-t border-gray-100 pt-3 text-red-500 font-bold">
-                        <span>Total Pembayaran (Produk)</span>
+                        <span>Total Pembayaran</span>
                         <span class="text-base" id="grand_total_display">Rp. 0</span>
                     </div>
                 </div>
@@ -206,8 +206,8 @@
 
                 totalBahanDisplay.textContent = formatRupiah(materialsTotal);
 
-                // 3. Grand Total (Product Payment)
-                grandTotalDisplay.textContent = formatRupiah(productTotal);
+                // 3. Grand Total (Produk + Bahan)
+                grandTotalDisplay.textContent = formatRupiah(productTotal + materialsTotal);
             }
 
             // Event listeners
