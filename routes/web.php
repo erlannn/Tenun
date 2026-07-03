@@ -17,6 +17,9 @@ Route::get('/laporan', function () {
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
+Route::get('/receipts/preorder/{id}.pdf', [TransaksiPreorderController::class, 'receiptPdf'])
+    ->name('preorder.receipt');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');

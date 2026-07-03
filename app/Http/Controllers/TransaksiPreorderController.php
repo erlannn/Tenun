@@ -96,6 +96,38 @@ class TransaksiPreorderController extends Controller
     }
 
     /**
+     * Render the preorder receipt as a public PDF response.
+     */
+    public function receiptPdf($id)
+    {
+        $transaksi = Transaksi::with(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.detailBahan.bahan'])
+            ->where('jenis_transaksi', 'PreOrder')
+            ->findOrFail($id);
+
+        $totalProduk = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
+            return $carry + (($dt->produk->harga ?? 0) * $dt->jumlah);
+        }, 0);
+
+        $totalBahan = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
+            return $carry + $dt->detailBahan->reduce(function ($subtotal, $detailBahan) {
+                return $subtotal + (($detailBahan->bahan->harga ?? 0) * $detailBahan->jumlah_bahan);
+            }, 0);
+        }, 0);
+
+        $totalAmount = $totalProduk + $totalBahan;
+        $pdfFilename = 'struk-preorder-' . $transaksi->id_transaksi . '.pdf';
+
+        return Pdf::driver('dompdf')
+            ->view('preorder.receipt-pdf', [
+                'transaksi' => $transaksi,
+                'totalProduk' => $totalProduk,
+                'totalBahan' => $totalBahan,
+                'grandTotal' => $totalAmount,
+            ])
+            ->name($pdfFilename);
+    }
+
+    /**
      * Store a new preorder transaction.
      */
     public function store(Request $request)
@@ -169,46 +201,13 @@ class TransaksiPreorderController extends Controller
 
         if ($transaksi && $transaksi->pelanggan && $transaksi->pelanggan->no_hp) {
             try {
-                // Load complete relationships for the PDF
-                $transaksi->load(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.detailBahan.bahan']);
-
-                // Generate PDF
                 $pdfFilename = 'struk-preorder-' . $transaksi->id_transaksi . '.pdf';
-                $pdfDirectory = public_path('receipts');
-                if (!file_exists($pdfDirectory)) {
-                    mkdir($pdfDirectory, 0755, true);
-                }
-                $pdfPath = $pdfDirectory . '/' . $pdfFilename;
-
-                // Calculate total before rendering the PDF
-                $totalProduk = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
-                    return $carry + (($dt->produk->harga ?? 0) * $dt->jumlah);
-                }, 0);
-
-                $totalBahan = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
-                    return $carry + $dt->detailBahan->reduce(function ($subtotal, $detailBahan) {
-                        return $subtotal + (($detailBahan->bahan->harga ?? 0) * $detailBahan->jumlah_bahan);
-                    }, 0);
-                }, 0);
-
-                $totalAmount = $totalProduk + $totalBahan;
-
-                Pdf::view('preorder.receipt-pdf', [
-                    'transaksi' => $transaksi,
-                    'totalProduk' => $totalProduk,
-                    'totalBahan' => $totalBahan,
-                    'grandTotal' => $totalAmount,
-                ])
-                    ->save($pdfPath);
-
-                $appUrl = rtrim(config('app.url') ?: 'https://riskasulam.vercel.app', '/');
-                $pdfUrl = $appUrl . '/receipts/' . rawurlencode($pdfFilename);
+                $pdfUrl = route('preorder.receipt', ['id' => $transaksi->id_transaksi]);
 
                 logger()->info('Generated preorder PDF for WhatsApp sending', [
                     'transaksi_id' => $transaksi->id_transaksi,
-                    'pdf_path' => $pdfPath,
                     'pdf_url' => $pdfUrl,
-                    'pdf_size' => file_exists($pdfPath) ? filesize($pdfPath) : null,
+                    'pdf_filename' => $pdfFilename,
                 ]);
 
                 // Send PDF from the public domain URL so Fonnte can fetch it.
