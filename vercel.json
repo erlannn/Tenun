@@ -1,0 +1,37 @@
+{
+    "version": 2,
+    "functions": {
+        "api/index.php": { "runtime": "vercel-php@0.7.4" }
+    },
+    "routes": [
+        { "src": "/build/assets/(.*)", "dest": "/public/build/assets/$1" },
+
+        { "src": "/images/(.*)", "dest": "/public/images/$1" },
+
+        { "src": "/(.*)", "dest": "/api/index.php" }
+    ],
+    "public": true,
+    "buildCommand": "npm install && npm run build",
+    "outputDirectory": "public",
+    "env": {
+        "APP_NAME":"RiskaSulam",
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "APP_URL": "https://riskasulam.vercel.app",
+        "APP_KEY": "base64:/6SoaTg9CkP0tY3J+dJBnqyKjOxeq8R8v98Cpq7Y/Uc=",
+        "APP_CONFIG_CACHE": "/tmp/config.php",
+        "APP_EVENTS_CACHE": "/tmp/events.php",
+        "APP_PACKAGES_CACHE": "/tmp/packages.php",
+        "APP_ROUTES_CACHE": "/tmp/routes.php",
+        "APP_SERVICES_CACHE": "/tmp/services.php",
+        "VIEW_COMPILED_PATH": "/tmp",
+        "CACHE_DRIVER": "array",
+        "LOG_CHANNEL": "stack",
+        "SESSION_DRIVER": "database",
+        "DB_CONNECTION": "mysql",
+        "DB_HOST": "12dyen.h.filess.io",
+        "DB_PORT": "3307",
+        "DB_DATABASE": "tenun_db_welcomelaw",
+        "DB_USERNAME": "tenun_db_welcomelaw"
+    }
+}
