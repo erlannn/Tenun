@@ -171,6 +171,57 @@ class WhatsappService
         return $decodedResponse;
     }
 
+    /**
+     * Mengirim file PDF dari URL publik beserta pesan WhatsApp ke nomor tertentu.
+     */
+    public function sendFileByUrl($target, $fileUrl, $filename, $message = '')
+    {
+        $target = $this->normalizeTarget($target);
+        $fileUrl = trim((string) $fileUrl);
+
+        if (!filter_var($fileUrl, FILTER_VALIDATE_URL)) {
+            logger()->error('Invalid PDF URL for WhatsApp sending: ' . $fileUrl);
+            return ['status' => false, 'reason' => 'Invalid PDF URL'];
+        }
+
+        $message = trim((string) $message);
+        if ($message === '') {
+            $message = $this->defaultAttachmentMessage;
+        }
+
+        logger()->info('Sending WhatsApp PDF by public URL', [
+            'target' => $target,
+            'file_url' => $fileUrl,
+            'file_name' => $filename,
+        ]);
+
+        $response = Http::withHeaders([
+            'Authorization' => $this->token,
+        ])->asForm()->post('https://api.fonnte.com/send', [
+            'target' => $target,
+            'url' => $fileUrl,
+            'message' => $message,
+            'filename' => $filename,
+            'countryCode' => '62',
+        ]);
+
+        $decodedResponse = $response->json();
+
+        if (!is_array($decodedResponse)) {
+            logger()->error('Fonnte returned invalid JSON for URL-based file upload: ' . $response->body());
+
+            return [
+                'status' => false,
+                'reason' => 'Invalid response from Fonnte',
+                'raw' => $response->body(),
+            ];
+        }
+
+        logger()->info('Fonnte response: ' . json_encode($decodedResponse));
+
+        return $decodedResponse;
+    }
+
     protected function normalizeTarget($target)
     {
         $target = preg_replace('/\D+/', '', (string) $target);

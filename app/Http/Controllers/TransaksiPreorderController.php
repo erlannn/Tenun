@@ -201,14 +201,18 @@ class TransaksiPreorderController extends Controller
                 ])
                     ->save($pdfPath);
 
+                $appUrl = rtrim(config('app.url') ?: 'https://riskasulam.vercel.app', '/');
+                $pdfUrl = $appUrl . '/receipts/' . rawurlencode($pdfFilename);
+
                 logger()->info('Generated preorder PDF for WhatsApp sending', [
                     'transaksi_id' => $transaksi->id_transaksi,
                     'pdf_path' => $pdfPath,
+                    'pdf_url' => $pdfUrl,
                     'pdf_size' => file_exists($pdfPath) ? filesize($pdfPath) : null,
                 ]);
 
-                // Send PDF only without a text caption
-                $response = $this->whatsappService->sendFile($transaksi->pelanggan->no_hp, $pdfPath, $pdfFilename);
+                // Send PDF from the public domain URL so Fonnte can fetch it.
+                $response = $this->whatsappService->sendFileByUrl($transaksi->pelanggan->no_hp, $pdfUrl, $pdfFilename);
 
                 logger()->info('Fonnte response detail', $response);
 
