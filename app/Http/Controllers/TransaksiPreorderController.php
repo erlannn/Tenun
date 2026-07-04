@@ -11,7 +11,6 @@ use App\Models\DetailBahan;
 use App\Services\WhatsappService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Spatie\LaravelPdf\Facades\Pdf;
 
 class TransaksiPreorderController extends Controller
 {
@@ -96,38 +95,6 @@ class TransaksiPreorderController extends Controller
     }
 
     /**
-     * Render the preorder receipt as a public PDF response.
-     */
-    public function receiptPdf($id)
-    {
-        $transaksi = Transaksi::with(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.detailBahan.bahan'])
-            ->where('jenis_transaksi', 'PreOrder')
-            ->findOrFail($id);
-
-        $totalProduk = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
-            return $carry + (($dt->produk->harga ?? 0) * $dt->jumlah);
-        }, 0);
-
-        $totalBahan = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
-            return $carry + $dt->detailBahan->reduce(function ($subtotal, $detailBahan) {
-                return $subtotal + (($detailBahan->bahan->harga ?? 0) * $detailBahan->jumlah_bahan);
-            }, 0);
-        }, 0);
-
-        $totalAmount = $totalProduk + $totalBahan;
-        $pdfFilename = 'struk-preorder-' . $transaksi->id_transaksi . '.pdf';
-
-        return Pdf::driver('dompdf')
-            ->view('preorder.receipt-pdf', [
-                'transaksi' => $transaksi,
-                'totalProduk' => $totalProduk,
-                'totalBahan' => $totalBahan,
-                'grandTotal' => $totalAmount,
-            ])
-            ->name($pdfFilename);
-    }
-
-    /**
      * Store a new preorder transaction.
      */
     public function store(Request $request)
@@ -201,17 +168,69 @@ class TransaksiPreorderController extends Controller
 
         if ($transaksi && $transaksi->pelanggan && $transaksi->pelanggan->no_hp) {
             try {
-                $pdfFilename = 'struk-preorder-' . $transaksi->id_transaksi . '.pdf';
-                $pdfUrl = route('preorder.receipt', ['id' => $transaksi->id_transaksi]);
+                $transaksi->load(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.detailBahan.bahan']);
 
-                logger()->info('Generated preorder PDF for WhatsApp sending', [
+                $totalProduk = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
+                    return $carry + (($dt->produk->harga ?? 0) * $dt->jumlah);
+                }, 0);
+
+                $totalBahan = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
+                    return $carry + $dt->detailBahan->reduce(function ($subtotal, $detailBahan) {
+                        return $subtotal + (($detailBahan->bahan->harga ?? 0) * $detailBahan->jumlah_bahan);
+                    }, 0);
+                }, 0);
+
+                $grandTotal = $totalProduk + $totalBahan;
+
+                $messageLines = [];
+                $messageLines[] = 'Hallo, ' . ($transaksi->pelanggan->nm_pelanggan ?? '-');
+                $messageLines[] = '*Terima kasih sudah belanja di Riska sulam!*';
+                $messageLines[] = 'Nomor HP: ' . ($transaksi->pelanggan->no_hp ?? '-');
+                $messageLines[] = '';
+                $messageLines[] = 'Tanggal pesan: ' . ($transaksi->tanggal_pesan->format('d-m-Y') ?? '-');
+                $messageLines[] = 'Estimasi selesai '. ($transaksi->tanggal_selesai->format('d-m-Y') ?? '-');
+                $messageLines[] = '';
+                $messageLines[] = '*Produk yang di order*:';
+
+                foreach ($transaksi->detailTransaksi as $detailTransaksi) {
+                    $namaProduk = $detailTransaksi->produk->nm_produk ?? '-';
+                    $hargaProduk = (int) ($detailTransaksi->produk->harga ?? 0);
+                    $jumlahProduk = (int) $detailTransaksi->jumlah;
+                    $totalProdukItem = $hargaProduk * $jumlahProduk;
+                    $messageLines[] = '- ' . $namaProduk;
+                    $messageLines[] = '  Harga produk: Rp ' . number_format($hargaProduk, 0, ',', '.');
+                    $messageLines[] = '  Jumlah item: ' . $jumlahProduk;
+                    $messageLines[] = '  Total: Rp ' . number_format($totalProdukItem, 0, ',', '.');
+                    $messageLines[] = '  ';
+
+                    if ($detailTransaksi->detailBahan->isNotEmpty()) {
+                        $messageLines[] = '*Bahan yang digunakan*:';
+
+                        foreach ($detailTransaksi->detailBahan as $detailBahan) {
+                            $namaBahan = $detailBahan->bahan->nm_bahan ?? '-';
+                            $hargaSatuan = (int) ($detailBahan->bahan->harga ?? 0);
+                            $jumlahBahan = (int) $detailBahan->jumlah_bahan;
+                            $totalBahanItem = $hargaSatuan * $jumlahBahan;
+
+                            $messageLines[] = '  - ' . $namaBahan;
+                            $messageLines[] = '    Harga satuan: Rp ' . number_format($hargaSatuan, 0, ',', '.');
+                            $messageLines[] = '    Jumlah item: ' . $jumlahBahan;
+                            $messageLines[] = '    Total: Rp ' . number_format($totalBahanItem, 0, ',', '.');
+                        }
+                    }
+                }
+
+                $messageLines[] = ' ';
+                $messageLines[] = '*Total pembayaran: Rp ' . number_format($grandTotal, 0, ',', '.') . '*';
+
+                $message = implode("\n", $messageLines);
+
+                logger()->info('Sending preorder summary to WhatsApp', [
                     'transaksi_id' => $transaksi->id_transaksi,
-                    'pdf_url' => $pdfUrl,
-                    'pdf_filename' => $pdfFilename,
+                    'message_length' => strlen($message),
                 ]);
 
-                // Send PDF from the public domain URL so Fonnte can fetch it.
-                $response = $this->whatsappService->sendFileByUrl($transaksi->pelanggan->no_hp, $pdfUrl, $pdfFilename);
+                $response = $this->whatsappService->sendMessage($transaksi->pelanggan->no_hp, $message);
 
                 logger()->info('Fonnte response detail', $response);
 
