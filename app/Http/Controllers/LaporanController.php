@@ -4,8 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\DB;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class LaporanController extends Controller
 {
@@ -77,7 +76,7 @@ class LaporanController extends Controller
             return $item->getAttribute('total_laporan') ?? 0;
         });
 
-        $pdf = Pdf::loadView('view.pdf', [
+        $pdf = Pdf::View('view.pdf', [
             'transaksi' => $transaksi,
             'total_keseluruhan' => $total_keseluruhan,
             'dari_tanggal' => $request->input('dari_tanggal'),
