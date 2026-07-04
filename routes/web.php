@@ -8,12 +8,6 @@ use App\Http\Controllers\BahanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanController;
 
-
-
-
-Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
-Route::get('/laporan-transaksi/cetak', [LaporanController::class, 'cetakPdf'])->name('laporan.cetak');
-
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
 Route::get('/dashboard', function () {
@@ -55,6 +49,9 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/transaksi-preorder/create', [TransaksiPreorderController::class, 'create'])->name('transaksi-preorder.create');
     Route::post('/transaksi-preorder/store', [TransaksiPreorderController::class, 'store'])->name('transaksi-preorder.store');
     Route::patch('/transaksi-preorder/{id}/status', [TransaksiPreorderController::class, 'updateStatus'])->name('transaksi-preorder.updateStatus');
+
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+    Route::get('/laporan-transaksi/cetak', [LaporanController::class, 'cetakPdf'])->name('laporan.cetak');
 });
 
 require __DIR__ . '/auth.php';
