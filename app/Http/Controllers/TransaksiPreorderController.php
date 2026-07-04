@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 
 class TransaksiPreorderController extends Controller
 {
+    private const JENIS_TRANSAKSI = 'Preorder';
+
     protected $whatsappService;
 
     public function __construct(WhatsappService $whatsappService)
@@ -29,7 +31,7 @@ class TransaksiPreorderController extends Controller
         $status = $request->input('status'); // all, diproses, selesai
 
         $query = Transaksi::with(['pelanggan', 'detailTransaksi.produk'])
-            ->where('jenis_transaksi', 'PreOrder');
+              ->where('jenis_transaksi', self::JENIS_TRANSAKSI);
 
         // Apply status filter
         if ($status === 'diproses' || $status === 'selesai') {
@@ -109,6 +111,7 @@ class TransaksiPreorderController extends Controller
             'bahan'             => 'nullable|array',
             'bahan.*'           => 'exists:bahan,id_bahan',
             'jumlah_bahan'      => 'nullable|array',
+            'jumlah_bahan.*'    => 'nullable|integer|min:1',
         ]);
 
         $transaksi = DB::transaction(function () use ($validated) {
@@ -123,8 +126,8 @@ class TransaksiPreorderController extends Controller
                 'id_pelanggan'    => $pelanggan->id_pelanggan,
                 'tanggal_pesan'   => now()->format('Y-m-d'),
                 'tanggal_selesai' => $validated['perkiraan_selesai'] ?: null,
-                'jenis_transaksi' => 'PreOrder',
-                'status'          => 'diproses',
+                'jenis_transaksi' => self::JENIS_TRANSAKSI,
+                'status'          => Transaksi::STATUS_DIPROSES,
             ]);
 
             // Create DetailTransaksi
@@ -138,6 +141,7 @@ class TransaksiPreorderController extends Controller
             // Handle materials used
             if (!empty($validated['bahan'])) {
                 foreach ($validated['bahan'] as $idBahan) {
+                    $idBahan = (int) $idBahan;
                     $qtyBahan = isset($validated['jumlah_bahan'][$idBahan]) ? (int) $validated['jumlah_bahan'][$idBahan] : 1;
                     $bahan = Bahan::find($idBahan);
 
@@ -263,10 +267,10 @@ class TransaksiPreorderController extends Controller
      */
     public function updateStatus(Request $request, $id)
     {
-        $transaksi = Transaksi::where('jenis_transaksi', 'PreOrder')->findOrFail($id);
+        $transaksi = Transaksi::where('jenis_transaksi', self::JENIS_TRANSAKSI)->findOrFail($id);
 
         $validated = $request->validate([
-            'status' => 'required|in:diproses,selesai',
+            'status' => 'required|in:' . Transaksi::STATUS_DIPROSES . ',' . Transaksi::STATUS_SELESAI,
         ]);
 
         $transaksi->update([

@@ -5,6 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id_bahan
+ * @property string $nm_bahan
+ * @property int $id_satuan
+ * @property string|float $harga
+ * @property int $stok
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, DetailBahan> $detailBahan
+ * @property-read Satuan|null $satuan
+ * @mixin \Eloquent
+ */
 class Bahan extends Model
 {
     use HasFactory;

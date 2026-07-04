@@ -5,6 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property int $id_produk
+ * @property string $nm_produk
+ * @property int $id_kategori
+ * @property string|null $foto
+ * @property string|float $harga
+ * @property-read Kategori|null $kategori
+ * @mixin \Eloquent
+ */
 class Produk extends Model
 {
     use HasFactory;
