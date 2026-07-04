@@ -6,14 +6,13 @@ use App\Http\Controllers\TransaksiBahanController;
 use App\Http\Controllers\TransaksiPreorderController;
 use App\Http\Controllers\BahanController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LaporanController;
 
 
 
 
-Route::get('/laporan', function () {
-    return view('laporan');
-})->name('laporan');
-
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+Route::get('/laporan-transaksi/cetak', [LaporanController::class, 'cetakPdf'])->name('laporan.cetak');
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 

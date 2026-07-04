@@ -68,7 +68,10 @@
                     @endforeach
                 </div>
             </div>
-            <button class="mt-8 w-full py-2.5 border border-[#008080] text-[#008080] font-bold text-sm rounded-xl bg-white hover:bg-[#008080] hover:text-white transition duration-200 cursor-pointer">Lihat Semua Stok</button>
+          <button type="button" onclick="window.location.href='{{ route('data-bahan') }}'" 
+    class="mt-8 w-full py-2.5 border border-[#008080] text-[#008080] font-bold text-sm rounded-xl bg-white hover:bg-[#008080] hover:text-white transition duration-200 cursor-pointer">
+    Lihat Semua Stok
+</button>
         </div>
         <!-- KOLOM KANAN: Grafik Penjualan -->
         <div class="bg-[#FAF6E9]/50 p-6 rounded-xl shadow-md border border-gray-100 lg:col-span-7 flex flex-col">
