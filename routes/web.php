@@ -5,14 +5,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransaksiBahanController;
 use App\Http\Controllers\TransaksiPreorderController;
 use App\Http\Controllers\BahanController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LaporanController;
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 Route::get('/transaksi-bahan', [TransaksiBahanController::class, 'index'])->middleware(['auth'])->name('transaksi-bahan');
 

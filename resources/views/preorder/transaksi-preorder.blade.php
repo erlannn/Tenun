@@ -3,18 +3,6 @@
     
     <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden p-6 max-w-[1400px] mx-auto">
 
-        <!-- Notification Alerts -->
-        @if(session('success'))
-            <div class="mb-5 p-4 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 rounded-r-lg shadow-sm text-sm font-medium">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm text-sm font-medium">
-                {{ session('error') }}
-            </div>
-        @endif
-
         <!-- Header: Judul, Navigasi Status, Tombol Tambah, & Pencarian -->
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
             <div>

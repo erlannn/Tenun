@@ -17,6 +17,79 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
+        @php
+            $toastMessages = [];
+
+            if (session('success')) {
+                $toastMessages[] = ['type' => 'success', 'message' => session('success')];
+            }
+
+            if (session('error')) {
+                $toastMessages[] = ['type' => 'error', 'message' => session('error')];
+            }
+
+            if (session('warning')) {
+                $toastMessages[] = ['type' => 'warning', 'message' => session('warning')];
+            }
+
+            if (session('info')) {
+                $toastMessages[] = ['type' => 'info', 'message' => session('info')];
+            }
+
+            if ($errors->any()) {
+                $toastMessages[] = ['type' => 'error', 'message' => $errors->first()];
+            }
+        @endphp
+
+        @if (!empty($toastMessages))
+            <div class="fixed top-4 right-4 z-50 flex w-full max-w-sm flex-col gap-3 pointer-events-none">
+                @foreach ($toastMessages as $toast)
+                    @php
+                        $toastClasses = [
+                            'success' => 'border-emerald-500 bg-emerald-50 text-emerald-900',
+                            'error' => 'border-rose-500 bg-rose-50 text-rose-900',
+                            'warning' => 'border-amber-500 bg-amber-50 text-amber-900',
+                            'info' => 'border-sky-500 bg-sky-50 text-sky-900',
+                        ];
+
+                        $toastAccent = [
+                            'success' => 'text-emerald-600',
+                            'error' => 'text-rose-600',
+                            'warning' => 'text-amber-600',
+                            'info' => 'text-sky-600',
+                        ];
+                    @endphp
+
+                    <div
+                        data-toast
+                        data-duration="2000"
+                        role="status"
+                        class="pointer-events-auto flex items-start gap-3 rounded-2xl border-l-4 px-4 py-3 shadow-xl ring-1 ring-black/5 backdrop-blur-sm transform translate-x-4 opacity-0 scale-95 transition-all duration-300 ease-out {{ $toastClasses[$toast['type']] ?? $toastClasses['info'] }}"
+                    >
+                        <div class="mt-0.5 {{ $toastAccent[$toast['type']] ?? $toastAccent['info'] }}">
+                            @if ($toast['type'] === 'success')
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.172 7.707 8.879a1 1 0 10-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                            @elseif ($toast['type'] === 'error')
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-11a1 1 0 112 0v4a1 1 0 11-2 0V7zm1 8a1.25 1.25 0 100-2.5A1.25 1.25 0 0010 15z" clip-rule="evenodd" /></svg>
+                            @elseif ($toast['type'] === 'warning')
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8.257 3.099c.763-1.36 2.723-1.36 3.486 0l6.518 11.613c.75 1.337-.214 2.988-1.742 2.988H3.48c-1.528 0-2.492-1.651-1.742-2.988L8.257 3.1zM10 7a1 1 0 00-1 1v3a1 1 0 102 0V8a1 1 0 00-1-1zm0 8a1.25 1.25 0 100-2.5A1.25 1.25 0 0010 15z" clip-rule="evenodd" /></svg>
+                            @else
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10A8 8 0 114 10a8 8 0 0114 0zm-8.75-3.25a.75.75 0 011.5 0v4a.75.75 0 01-1.5 0v-4zm0 6.5a.75.75 0 011.5 0V14a.75.75 0 01-1.5 0v-.75z" clip-rule="evenodd" /></svg>
+                            @endif
+                        </div>
+
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-semibold leading-5">{{ $toast['message'] }}</p>
+                        </div>
+
+                        <button type="button" data-toast-close class="mt-0.5 rounded-full p-1 text-current/60 transition hover:bg-black/5 hover:text-current" aria-label="Tutup notifikasi">
+                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 10-1.06-1.06L10 8.94 6.28 5.22z" /></svg>
+                        </button>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
         <div class="min-h-screen bg-gray-100 flex">
             {{-- Sidebar component --}}
             <aside class="w-64 bg-[#004D39] text-white flex flex-col min-h-screen sticky top-0 shadow-xl  md:flex z-20">
@@ -93,11 +166,11 @@
                 </header> --}}
                 <header class="bg-white border-b border-gray-200 px-4 py-2 flex items-center md:flex">
                     <button id="sidebarToggleDesktop" class="flex items-center px-3 py-2 bg-[#004D39] text-white rounded hover:bg-[#003628]" aria-label="Toggle Sidebar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-            <h2 class="ml-5 text-xl font-semibold text-gray-700">
-        {{ $title ?? '' }}
-    </h2>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                        <h2 class="ml-5 text-xl font-semibold text-gray-700">
+                            {{ $title ?? '' }}
+                        </h2>
                 </header>
                 
                 <main class="flex-1 p-8 bg-white overflow-y-auto">

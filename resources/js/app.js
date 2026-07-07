@@ -1,51 +1,64 @@
 import './bootstrap';
+import Chart from 'chart.js/auto';
 
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
+window.Chart = Chart;
 
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', function () {
+    const toastElements = document.querySelectorAll('[data-toast]');
     const dashboardChart = document.getElementById('dashboardChart');
     const catalogImageModal = document.getElementById('catalogImageModal');
     const catalogImageModalImg = document.getElementById('catalogImageModalImg');
     const catalogImageModalClose = document.getElementById('catalogImageModalClose');
 
+    toastElements.forEach((toast) => {
+        const closeButton = toast.querySelector('[data-toast-close]');
+        const duration = Number(toast.dataset.duration || 2000);
+
+        const dismissToast = () => {
+            toast.classList.add('opacity-0', 'translate-x-4', 'scale-95');
+            toast.classList.remove('opacity-100', 'translate-x-0', 'scale-100');
+
+            window.setTimeout(() => {
+                toast.remove();
+            }, 250);
+        };
+
+        window.requestAnimationFrame(() => {
+            toast.classList.remove('opacity-0', 'translate-x-4', 'scale-95');
+            toast.classList.add('opacity-100', 'translate-x-0', 'scale-100');
+        });
+
+        const autoDismissTimer = window.setTimeout(dismissToast, duration);
+
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                window.clearTimeout(autoDismissTimer);
+                dismissToast();
+            });
+        }
+    });
+
     if (dashboardChart && typeof Chart !== 'undefined') {
+        const chartData = dashboardChart.dataset.chart ? JSON.parse(dashboardChart.dataset.chart) : null;
+
+        if (!chartData) {
+            return;
+        }
+
         const ctx = dashboardChart.getContext('2d');
         new Chart(ctx, {
             type: 'line',
-            data: {
-                labels: ['28 Apr', '5 Mei', '12 Mei', '19 Mei', '126 Mei'],
-                datasets: [
-                    {
-                        label: 'Preorder',
-                        data: [7, 14, 4, 7, 14, 3, 6],
-                        borderColor: '#004D39',
-                        backgroundColor: 'transparent',
-                        borderWidth: 1.5,
-                        pointBackgroundColor: '#004D39',
-                        pointRadius: 3,
-                        tension: 0
-                    },
-                    {
-                        label: 'Penjualan Bahan',
-                        data: [12, 12, 5, 11, 15, 5, 8],
-                        borderColor: '#D4AF37',
-                        backgroundColor: 'transparent',
-                        borderWidth: 1.5,
-                        pointBackgroundColor: '#D4AF37',
-                        pointRadius: 3,
-                        tension: 0
-                    }
-                ]
-            },
+            data: chartData,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { min: 0, max: 20, ticks: { stepSize: 5 } }
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
                 },
                 plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 6 } } }
             }

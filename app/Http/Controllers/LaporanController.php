@@ -43,7 +43,7 @@ class LaporanController extends Controller
         $total_keseluruhan = $query->get()->sum($calculateTransactionTotal);
 
         $sudah_filter = !empty($dari_tanggal) || !empty($sampai_tanggal) || !empty($jenis_transaksi) || !empty($cari);
-
+        
         return view('laporan', compact('transaksi', 'total_keseluruhan', 'sudah_filter'));
     }
 

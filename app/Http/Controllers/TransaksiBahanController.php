@@ -64,6 +64,11 @@ class TransaksiBahanController extends Controller
     public function create()
     {
         $bahan = Bahan::with('satuan')->orderBy('nm_bahan')->get();
+
+        if (empty(session('transaksi_bahan_cart', []))) {
+            session()->forget('nama_pelanggan');
+        }
+
         return view('transaksi-bahan.create', compact('bahan'));
     }
 
@@ -85,7 +90,7 @@ class TransaksiBahanController extends Controller
                 session(['nama_pelanggan' => $validated['nama_pelanggan']]);
             }
 
-            $bahan = Bahan::find($validated['id_bahan']);
+            $bahan = Bahan::where('id_bahan', '=', $validated['id_bahan'], 'and')->first();
             $cart = session()->get('transaksi_bahan_cart', []);
             $cart[] = [
                 'id'    => $bahan->id_bahan,
@@ -144,7 +149,7 @@ class TransaksiBahanController extends Controller
                             'jumlah_bahan' => $item['jumlah'],
                         ]);
                         // Decrease stock
-                        $bahan = Bahan::find($item['id']);
+                        $bahan = Bahan::where('id_bahan', '=', $item['id'], 'and')->first();
                         if ($bahan) {
                             $bahan->decrement('stok', $item['jumlah']);
                         }
@@ -152,6 +157,7 @@ class TransaksiBahanController extends Controller
                 });
 
                 session()->forget('transaksi_bahan_cart');
+                session()->forget('nama_pelanggan');
                 return redirect()->route('transaksi-bahan')->with('success', 'Transaksi berhasil disimpan!');
             }
 
@@ -189,6 +195,7 @@ class TransaksiBahanController extends Controller
             });
 
             session()->forget('transaksi_bahan_cart');
+                session()->forget('nama_pelanggan');
             return redirect()->route('transaksi-bahan')->with('success', 'Transaksi berhasil disimpan!');
     }
 
