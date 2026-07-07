@@ -12,6 +12,11 @@ class WhatsappService
     public function __construct()
     {
         $this->token = env('FONNTE_TOKEN');
+
+        // Warn if the Fonnte token is not set. WhatsApp notifications will be disabled.
+        if (empty($this->token)) {
+            logger()->warning('Fonnte token (FONNTE_TOKEN) is missing or empty. WhatsApp notifications will be disabled.');
+        }
     }
 
     /**
@@ -20,6 +25,12 @@ class WhatsappService
     public function sendMessage($target, $message)
     {
         $target = $this->normalizeTarget($target);
+
+        // If token is missing, skip HTTP request and return error structure.
+        if (empty($this->token)) {
+            logger()->warning('Attempted to send WhatsApp message without FONNTE_TOKEN.');
+            return ['status' => false, 'reason' => 'FONNTE_TOKEN not configured'];
+        }
 
         $response = Http::withHeaders([
             'Authorization' => $this->token,
