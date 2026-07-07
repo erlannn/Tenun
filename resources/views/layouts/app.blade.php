@@ -91,7 +91,7 @@
                         <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
                 </header> --}}
-                <header class="bg-white border-b border-gray-200 px-4 py-2 flex items-center hidden md:flex">
+                <header class="bg-white border-b border-gray-200 px-4 py-2 flex items-center md:flex">
                     <button id="sidebarToggleDesktop" class="flex items-center px-3 py-2 bg-[#004D39] text-white rounded hover:bg-[#003628]" aria-label="Toggle Sidebar"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
