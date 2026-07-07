@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class TransaksiPreorderController extends Controller
 {
-    private const JENIS_TRANSAKSI = 'Preorder';
+    private const JENIS_TRANSAKSI = Transaksi::JENIS_PREORDER;
 
     protected $whatsappService;
 
@@ -191,8 +191,8 @@ class TransaksiPreorderController extends Controller
                 $messageLines[] = '*Terima kasih sudah belanja di Riska sulam!*';
                 $messageLines[] = 'Nomor HP: ' . ($transaksi->pelanggan->no_hp ?? '-');
                 $messageLines[] = '';
-                $messageLines[] = 'Tanggal pesan: ' . ($transaksi->tanggal_pesan->format('d-m-Y') ?? '-');
-                $messageLines[] = 'Estimasi selesai '. ($transaksi->tanggal_selesai->format('d-m-Y') ?? '-');
+                $messageLines[] = 'Tanggal pesan: ' . ($transaksi->tanggal_pesan?->format('d-m-Y') ?? '-');
+                $messageLines[] = 'Estimasi selesai '. ($transaksi->tanggal_selesai?->format('d-m-Y') ?? '-');
                 $messageLines[] = '';
                 $messageLines[] = '*Produk yang di order*:';
 
@@ -247,7 +247,7 @@ class TransaksiPreorderController extends Controller
                         'response' => $response,
                     ]);
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 logger()->error('Gagal mengirim WhatsApp struk preorder: ' . $e->getMessage());
                 $waError = $e->getMessage();
             }
