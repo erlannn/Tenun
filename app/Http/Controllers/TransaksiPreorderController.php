@@ -191,8 +191,16 @@ class TransaksiPreorderController extends Controller
                 $messageLines[] = '*Terima kasih sudah belanja di Riska sulam!*';
                 $messageLines[] = 'Nomor HP: ' . ($transaksi->pelanggan->no_hp ?? '-');
                 $messageLines[] = '';
-                $messageLines[] = 'Tanggal pesan: ' . ($transaksi->tanggal_pesan?->format('d-m-Y') ?? '-');
-                $messageLines[] = 'Estimasi selesai '. ($transaksi->tanggal_selesai?->format('d-m-Y') ?? '-');
+                $tanggalPesan = $transaksi->tanggal_pesan instanceof \Carbon\Carbon
+                    ? $transaksi->tanggal_pesan->format('d-m-Y')
+                    : ($transaksi->tanggal_pesan ? date('d-m-Y', strtotime($transaksi->tanggal_pesan)) : '-');
+
+                $tanggalSelesai = $transaksi->tanggal_selesai instanceof \Carbon\Carbon
+                    ? $transaksi->tanggal_selesai->format('d-m-Y')
+                    : ($transaksi->tanggal_selesai ? date('d-m-Y', strtotime($transaksi->tanggal_selesai)) : '-');
+
+                $messageLines[] = 'Tanggal pesan: ' . $tanggalPesan;
+                $messageLines[] = 'Estimasi selesai ' . $tanggalSelesai;
                 $messageLines[] = '';
                 $messageLines[] = '*Produk yang di order*:';
 
