@@ -241,14 +241,14 @@ class TransaksiPreorderController extends Controller
                 if (isset($response['status']) && $response['status'] == true) {
                     $waSent = true;
                 } else {
-                    $waError = $response['reason'] ?? 'Gagal mengirim berkas ke Fonnte';
-                    logger()->warning('WhatsApp PDF send failed', [
+                    $waError = $response['reason'] ?? 'Gagal mengirim pesan WhatsApp ke Fonnte';
+                    logger()->warning('WhatsApp notification send failed', [
                         'transaksi_id' => $transaksi->id_transaksi,
                         'response' => $response,
                     ]);
                 }
             } catch (\Throwable $e) {
-                logger()->error('Gagal mengirim WhatsApp struk preorder: ' . $e->getMessage());
+                logger()->error('Gagal mengirim WhatsApp preorder: ' . $e->getMessage());
                 $waError = $e->getMessage();
             }
         }

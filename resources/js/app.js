@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     toastElements.forEach((toast) => {
         const closeButton = toast.querySelector('[data-toast-close]');
-        const duration = Number(toast.dataset.duration || 2000);
+        const duration = Number(toast.dataset.duration || 8000);
 
         const dismissToast = () => {
             toast.classList.add('opacity-0', 'translate-x-4', 'scale-95');
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             window.setTimeout(() => {
                 toast.remove();
-            }, 250);
+            }, 350);
         };
 
         window.requestAnimationFrame(() => {
