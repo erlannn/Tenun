@@ -271,7 +271,7 @@
                     <td>
                         <div class="product-name">{{ $dt->produk->nm_produk ?? 'Produk Tidak Ditemukan' }}</div>
                         @if($dt->motif)
-                            <div class="motif">Motif: {{ $dt->motif }}</div>
+                            <div class="motif">Motif: {{ is_object($dt->motif) ? $dt->motif->nm_motif : $dt->motif }}</div>
                         @endif
                     </td>
                     <td class="number-col">Rp. {{ number_format($dt->produk->harga ?? 0, 0, ',', '.') }}</td>

@@ -13,14 +13,14 @@ class DetailTransaksiSeeder extends Seeder
             'id_transaksi' => 1,
             'id_produk' => 1,
             'jumlah' => 2,
-            'motif' => 'Motif Pucuak Rabuang',
+            'id_motif' => 1,
         ]);
 
         DetailTransaksi::create([
             'id_transaksi' => 2,
             'id_produk' => 2,
             'jumlah' => 1,
-            'motif' => 'Motif Kaluak Paku',
+            'id_motif' => 2,
         ]);
     }
 }

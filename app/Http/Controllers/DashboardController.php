@@ -14,11 +14,19 @@ class DashboardController extends Controller
         $today = now()->toDateString();
         $startDate = now()->subDays(29)->toDateString();
 
+<<<<<<< HEAD
         $totalTransaksiHariIni = Transaksi::whereDate('tanggal_pesan', '=', $today)->count();
         $totalPreorderHariIni = Transaksi::whereDate('tanggal_pesan', '=', $today)
             ->whereRaw('LOWER(jenis_transaksi) = ?', ['preorder'])
             ->count();
         $totalPenjualanBahanHariIni = Transaksi::whereDate('tanggal_pesan', '=', $today)
+=======
+        $totalTransaksiHariIni = Transaksi::whereDate('tanggal_pesan', '=', $today, 'and')->count();
+        $totalPreorderHariIni = Transaksi::whereDate('tanggal_pesan', '=', $today, 'and')
+            ->whereRaw('LOWER(jenis_transaksi) = ?', ['preorder'])
+            ->count();
+        $totalPenjualanBahanHariIni = Transaksi::whereDate('tanggal_pesan', '=', $today, 'and')
+>>>>>>> 8c89cb9596ac0defa5eadc7b25660d01146aa6e5
             ->whereRaw('LOWER(jenis_transaksi) = ?', ['bahan'])
             ->count();
 

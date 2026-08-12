@@ -63,7 +63,7 @@ class TransaksiBahanController extends Controller
      */
     public function create()
     {
-        $bahan = Bahan::with('satuan')->orderBy('nm_bahan')->get();
+        $bahan = Bahan::with('satuan')->orderBy('nm_bahan', 'asc')->get();
 
         if (empty(session('transaksi_bahan_cart', []))) {
             session()->forget('nama_pelanggan');

@@ -11,6 +11,10 @@ use App\Http\Controllers\LaporanController;
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
+Route::get('/kosong', function () {
+    return view('kosong');
+})->name('kosong');
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
 Route::get('/transaksi-bahan', [TransaksiBahanController::class, 'index'])->middleware(['auth'])->name('transaksi-bahan');
@@ -44,7 +48,10 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::put('/bahan/{bahan}', [BahanController::class, 'update'])->name('bahan.update');
     Route::delete('/bahan/{bahan}', [BahanController::class, 'destroy'])->name('bahan.destroy');
 
+
     Route::get('/transaksi-preorder', [TransaksiPreorderController::class, 'index'])->name('transaksi-preorder');
+
+
     Route::get('/transaksi-preorder/create', [TransaksiPreorderController::class, 'create'])->name('transaksi-preorder.create');
     Route::post('/transaksi-preorder/store', [TransaksiPreorderController::class, 'store'])->name('transaksi-preorder.store');
     Route::patch('/transaksi-preorder/{id}/status', [TransaksiPreorderController::class, 'updateStatus'])->name('transaksi-preorder.updateStatus');
