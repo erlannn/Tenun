@@ -86,7 +86,7 @@ class BahanController extends Controller
     /**
      * Menghapus data bahan dari database.
      */
-    public function destroy($bahan)
+    public function destroy(Bahan|int|string $bahan)
     {
         $bahan = Bahan::findOrFail($bahan);
         

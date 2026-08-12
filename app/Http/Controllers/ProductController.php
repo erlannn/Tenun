@@ -103,7 +103,7 @@ class ProductController extends Controller
         return redirect()->route('data-produk')->with('success', 'Produk updated.');
     }
 
-    public function destroy($produk)
+    public function destroy(Produk|int|string $produk)
     {
         $produk = Produk::findOrFail($produk);
         $produk->delete();

@@ -55,7 +55,19 @@
 
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Motif</label>
-                    <input type="text" name="motif" value="{{ old('motif') }}" placeholder="Contoh: Motif Pucuak Rabuang" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-gray-700">
+                    <div class="relative">
+                        <select name="id_motif" id="motif_select" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl bg-white appearance-none focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition pr-10 text-gray-700">
+                            <option value="">-Pilih Motif-</option>
+                            @foreach($motifs as $m)
+                                <option value="{{ $m->id_motif }}" {{ old('id_motif') == $m->id_motif ? 'selected' : '' }}>
+                                    {{ $m->nm_motif }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-4">
