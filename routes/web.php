@@ -11,9 +11,6 @@ use App\Http\Controllers\LaporanController;
 
 Route::get('/', [ProductController::class, 'welcome'])->name('welcome');
 
-Route::get('/kosong', function () {
-    return view('kosong');
-})->name('kosong');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth'])->name('dashboard');
 
