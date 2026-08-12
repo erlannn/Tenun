@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaksi;
 use App\Models\Pelanggan;
 use App\Models\Produk;
+use App\Models\Motif;
 use App\Models\DetailTransaksi;
 use App\Models\Bahan;
 use App\Models\DetailBahan;
@@ -16,7 +17,7 @@ class TransaksiPreorderController extends Controller
 {
     private const JENIS_TRANSAKSI = Transaksi::JENIS_PREORDER;
 
-    protected $whatsappService;
+    protected WhatsappService $whatsappService;
 
     public function __construct(WhatsappService $whatsappService)
     {
@@ -30,7 +31,7 @@ class TransaksiPreorderController extends Controller
         $search = $request->input('search');
         $status = $request->input('status'); // all, diproses, selesai
 
-        $query = Transaksi::with(['pelanggan', 'detailTransaksi.produk'])
+        $query = Transaksi::with(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.motif'])
               ->where('jenis_transaksi', self::JENIS_TRANSAKSI);
 
         // Apply status filter
@@ -56,7 +57,7 @@ class TransaksiPreorderController extends Controller
             })->implode(', ');
 
             $motifs = $tr->detailTransaksi->map(function ($dt) {
-                return $dt->motif;
+                return $dt->motif ? $dt->motif->nm_motif : null;
             })->filter()->implode(', ');
 
             // Calculate total price: sum of (produk.harga * jumlah)
@@ -91,9 +92,10 @@ class TransaksiPreorderController extends Controller
      */
     public function create()
     {
-        $produk = Produk::orderBy('nm_produk')->get();
-        $bahan = Bahan::with('satuan')->orderBy('nm_bahan')->get();
-        return view('preorder.create', compact('produk', 'bahan'));
+        $produk = Produk::orderBy('nm_produk', 'asc')->get();
+        $bahan = Bahan::with('satuan')->orderBy('nm_bahan', 'asc')->get();
+        $motifs = Motif::orderBy('nm_motif', 'asc')->get();
+        return view('preorder.create', compact('produk', 'bahan', 'motifs'));
     }
 
     /**
@@ -105,7 +107,7 @@ class TransaksiPreorderController extends Controller
             'nama'              => 'required|string|max:100',
             'no_hp'             => 'nullable|string|max:15',
             'id_produk'         => 'required|exists:produk,id_produk',
-            'motif'             => 'nullable|string|max:255',
+            'id_motif'          => 'nullable|exists:motif,id_motif',
             'jumlah'            => 'required|integer|min:1',
             'perkiraan_selesai' => 'nullable|date',
             'bahan'             => 'nullable|array',
@@ -135,7 +137,7 @@ class TransaksiPreorderController extends Controller
                 'id_transaksi' => $transaksi->id_transaksi,
                 'id_produk'    => $validated['id_produk'],
                 'jumlah'       => $validated['jumlah'],
-                'motif'        => $validated['motif'] ?: null,
+                'id_motif'     => $validated['id_motif'] ?: null,
             ]);
 
             // Handle materials used
@@ -143,7 +145,7 @@ class TransaksiPreorderController extends Controller
                 foreach ($validated['bahan'] as $idBahan) {
                     $idBahan = (int) $idBahan;
                     $qtyBahan = isset($validated['jumlah_bahan'][$idBahan]) ? (int) $validated['jumlah_bahan'][$idBahan] : 1;
-                    $bahan = Bahan::find($idBahan);
+                    $bahan = Bahan::find($idBahan, ['*']);
 
                     if (!$bahan) {
                         throw new \RuntimeException('Bahan tidak ditemukan: ' . $idBahan);
@@ -172,7 +174,7 @@ class TransaksiPreorderController extends Controller
 
         if ($transaksi && $transaksi->pelanggan && $transaksi->pelanggan->no_hp) {
             try {
-                $transaksi->load(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.detailBahan.bahan']);
+                $transaksi->load(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.motif', 'detailTransaksi.detailBahan.bahan']);
 
                 $totalProduk = $transaksi->detailTransaksi->reduce(function ($carry, $dt) {
                     return $carry + (($dt->produk->harga ?? 0) * $dt->jumlah);
@@ -210,6 +212,9 @@ class TransaksiPreorderController extends Controller
                     $jumlahProduk = (int) $detailTransaksi->jumlah;
                     $totalProdukItem = $hargaProduk * $jumlahProduk;
                     $messageLines[] = '- ' . $namaProduk;
+                    if ($detailTransaksi->motif) {
+                        $messageLines[] = '  Motif: ' . $detailTransaksi->motif->nm_motif;
+                    }
                     $messageLines[] = '  Harga produk: Rp ' . number_format($hargaProduk, 0, ',', '.');
                     $messageLines[] = '  Jumlah item: ' . $jumlahProduk;
                     $messageLines[] = '  Total: Rp ' . number_format($totalProdukItem, 0, ',', '.');
@@ -273,9 +278,9 @@ class TransaksiPreorderController extends Controller
     /**
      * Update preorder transaction status.
      */
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, int|string $id)
     {
-        $transaksi = Transaksi::where('jenis_transaksi', self::JENIS_TRANSAKSI)->findOrFail($id);
+        $transaksi = Transaksi::where('jenis_transaksi', '=', self::JENIS_TRANSAKSI, 'and')->findOrFail($id);
 
         $validated = $request->validate([
             'status' => 'required|in:' . Transaksi::STATUS_DIPROSES . ',' . Transaksi::STATUS_SELESAI,

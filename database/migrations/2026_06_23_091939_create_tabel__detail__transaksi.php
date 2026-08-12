@@ -21,8 +21,10 @@ return new class extends Migration
 
             $table->integer('jumlah');
 
-            $table->string('motif')
-                ->nullable();
+            $table->foreignId('id_motif')
+                ->nullable()
+                ->constrained('motif', 'id_motif')
+                ->nullOnDelete();
 
             $table->timestamps();
         });

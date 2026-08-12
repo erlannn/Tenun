@@ -6,6 +6,7 @@ use App\Models\Bahan;
 use App\Models\DetailBahan;
 use App\Models\DetailTransaksi;
 use App\Models\Kategori;
+use App\Models\Motif;
 use App\Models\Pelanggan;
 use App\Models\Produk;
 use App\Models\Satuan;
@@ -26,6 +27,10 @@ class LaporanControllerTest extends TestCase
 
         $kategori = Kategori::create([
             'nm_kategori' => 'Pakaian',
+        ]);
+
+        $motifPolos = Motif::create([
+            'nm_motif' => 'Polos',
         ]);
 
         $produk = Produk::create([
@@ -56,7 +61,7 @@ class LaporanControllerTest extends TestCase
             'id_transaksi' => $preorder->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 3,
-            'motif' => 'Polos',
+            'id_motif' => $motifPolos->id_motif,
         ]);
 
         $bahanTransaksi = Transaksi::create([
@@ -69,7 +74,7 @@ class LaporanControllerTest extends TestCase
             'id_transaksi' => $bahanTransaksi->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 2,
-            'motif' => null,
+            'id_motif' => null,
         ]);
 
         DetailBahan::create([

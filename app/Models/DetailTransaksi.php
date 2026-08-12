@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $id_transaksi
  * @property int $id_produk
  * @property int $jumlah
- * @property string|null $motif
+ * @property int|null $id_motif
  * @property-read Transaksi|null $transaksi
  * @property-read Produk|null $produk
+ * @property-read Motif|null $motif
  * @property-read \Illuminate\Database\Eloquent\Collection<int, DetailBahan> $detailBahan
  * @mixin \Eloquent
  */
@@ -28,7 +29,7 @@ class DetailTransaksi extends Model
         'id_transaksi',
         'id_produk',
         'jumlah',
-        'motif',
+        'id_motif',
     ];
 
     public function transaksi()
@@ -46,6 +47,15 @@ class DetailTransaksi extends Model
             Produk::class,
             'id_produk',
             'id_produk'
+        );
+    }
+
+    public function motif()
+    {
+        return $this->belongsTo(
+            Motif::class,
+            'id_motif',
+            'id_motif'
         );
     }
 

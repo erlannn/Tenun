@@ -6,6 +6,7 @@ use App\Models\Bahan;
 use App\Models\DetailBahan;
 use App\Models\DetailTransaksi;
 use App\Models\Kategori;
+use App\Models\Motif;
 use App\Models\Pelanggan;
 use App\Models\Produk;
 use App\Models\Satuan;
@@ -30,6 +31,14 @@ class DashboardControllerTest extends TestCase
 
         $kategori = Kategori::create([
             'nm_kategori' => 'Pakaian',
+        ]);
+
+        $motifPolos = Motif::create([
+            'nm_motif' => 'Polos',
+        ]);
+
+        $motifKembang = Motif::create([
+            'nm_motif' => 'Kembang',
         ]);
 
         $produk = Produk::create([
@@ -67,7 +76,7 @@ class DashboardControllerTest extends TestCase
             'id_transaksi' => $todayPreorder->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 2,
-            'motif' => 'Polos',
+            'id_motif' => $motifPolos->id_motif,
         ]);
 
         $todayBahan = Transaksi::create([
@@ -81,7 +90,7 @@ class DashboardControllerTest extends TestCase
             'id_transaksi' => $todayBahan->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 1,
-            'motif' => null,
+            'id_motif' => null,
         ]);
 
         DetailBahan::create([
@@ -101,7 +110,7 @@ class DashboardControllerTest extends TestCase
             'id_transaksi' => $yesterdayPreorder->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 3,
-            'motif' => 'Kembang',
+            'id_motif' => $motifKembang->id_motif,
         ]);
 
         $thirtyDaysAgo = Transaksi::create([
@@ -115,7 +124,7 @@ class DashboardControllerTest extends TestCase
             'id_transaksi' => $thirtyDaysAgo->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 1,
-            'motif' => null,
+            'id_motif' => null,
         ]);
 
         DetailBahan::create([
