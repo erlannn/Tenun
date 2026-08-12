@@ -6,10 +6,13 @@ use App\Models\Bahan;
 use App\Models\DetailBahan;
 use App\Models\DetailTransaksi;
 use App\Models\Kategori;
+use App\Models\Motif;
 use App\Models\Pelanggan;
 use App\Models\Produk;
 use App\Models\Satuan;
 use App\Models\Transaksi;
+use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,6 +22,10 @@ class LaporanControllerTest extends TestCase
 
     public function test_laporan_menampilkan_total_yang_sesuai_untuk_setiap_jenis_transaksi(): void
     {
+        $this->seed(RolePermissionSeeder::class);
+        $user = User::factory()->create();
+        $user->assignRole('Admin');
+
         $pelanggan = Pelanggan::create([
             'nm_pelanggan' => 'Budi',
             'no_hp' => '08123456789',
@@ -26,6 +33,10 @@ class LaporanControllerTest extends TestCase
 
         $kategori = Kategori::create([
             'nm_kategori' => 'Pakaian',
+        ]);
+
+        $motifPolos = Motif::create([
+            'nm_motif' => 'Polos',
         ]);
 
         $produk = Produk::create([
@@ -56,7 +67,7 @@ class LaporanControllerTest extends TestCase
             'id_transaksi' => $preorder->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 3,
-            'motif' => 'Polos',
+            'id_motif' => $motifPolos->id_motif,
         ]);
 
         $bahanTransaksi = Transaksi::create([
@@ -69,7 +80,7 @@ class LaporanControllerTest extends TestCase
             'id_transaksi' => $bahanTransaksi->id_transaksi,
             'id_produk' => $produk->id_produk,
             'jumlah' => 2,
-            'motif' => null,
+            'id_motif' => null,
         ]);
 
         DetailBahan::create([
@@ -78,7 +89,7 @@ class LaporanControllerTest extends TestCase
             'jumlah_bahan' => 2,
         ]);
 
-        $response = $this->get('/laporan');
+        $response = $this->actingAs($user)->get('/laporan');
 
         $response->assertOk();
         $response->assertSee('Rp. 30.000');

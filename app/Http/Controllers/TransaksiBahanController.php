@@ -202,7 +202,7 @@ class TransaksiBahanController extends Controller
     /**
      * Show detail of a single transaksi.
      */
-    public function show($id)
+    public function show(int|string $id)
     {
         $transaksi = Transaksi::with(['pelanggan', 'detailTransaksi.detailBahan.bahan'])
             ->findOrFail($id);
