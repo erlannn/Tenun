@@ -50,6 +50,26 @@ foreach ($cacheEnv as $key => $val) {
     $_SERVER[$key] = $val;
 }
 
+// Session configuration defaults for serverless environment
+$sessionEnv = [
+    'SESSION_DRIVER'          => 'database',
+    'SESSION_LIFETIME'        => '120',
+    'SESSION_EXPIRE_ON_CLOSE' => 'false',
+    'SESSION_ENCRYPT'         => 'false',
+    'SESSION_PATH'            => '/',
+    'SESSION_COOKIE'          => 'riskasulam_session',
+    'SESSION_SECURE_COOKIE'   => 'true',
+    'SESSION_SAME_SITE'       => 'lax',
+];
+
+foreach ($sessionEnv as $key => $val) {
+    if (empty(getenv($key))) {
+        putenv("{$key}={$val}");
+        $_ENV[$key] = $val;
+        $_SERVER[$key] = $val;
+    }
+}
+
 try {
     require __DIR__ . '/../public/index.php';
 } catch (\Throwable $e) {
