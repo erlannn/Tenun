@@ -24,6 +24,14 @@ foreach ($dirs as $dir) {
     }
 }
 
+putenv('LARAVEL_STORAGE_PATH=' . $storagePath);
+$_ENV['LARAVEL_STORAGE_PATH'] = $storagePath;
+$_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
+
+putenv('VIEW_COMPILED_PATH=' . $storagePath . '/framework/views');
+$_ENV['VIEW_COMPILED_PATH'] = $storagePath . '/framework/views';
+$_SERVER['VIEW_COMPILED_PATH'] = $storagePath . '/framework/views';
+
 try {
     require __DIR__ . '/../public/index.php';
 } catch (\Throwable $e) {
