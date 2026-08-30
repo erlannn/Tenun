@@ -31,7 +31,7 @@ class TransaksiPreorderController extends Controller
         $search = $request->input('search');
         $status = $request->input('status'); // all, diproses, selesai
 
-        $query = Transaksi::with(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.motif'])
+        $query = Transaksi::with(['pelanggan', 'detailTransaksi.produk', 'detailTransaksi.motif', 'detailTransaksi.detailBahan.bahan'])
               ->where('jenis_transaksi', self::JENIS_TRANSAKSI);
 
         // Apply status filter
@@ -60,10 +60,18 @@ class TransaksiPreorderController extends Controller
                 return $dt->motif ? $dt->motif->nm_motif : null;
             })->filter()->implode(', ');
 
-            // Calculate total price: sum of (produk.harga * jumlah)
-            $total = $tr->detailTransaksi->reduce(function ($carry, $dt) {
+            // Calculate total price: sum of (produk.harga * jumlah) + sum of (bahan.harga * jumlah_bahan)
+            $totalProduk = $tr->detailTransaksi->reduce(function ($carry, $dt) {
                 return $carry + (($dt->produk->harga ?? 0) * $dt->jumlah);
             }, 0);
+
+            $totalBahan = $tr->detailTransaksi->reduce(function ($carry, $dt) {
+                return $carry + $dt->detailBahan->reduce(function ($subtotal, $detailBahan) {
+                    return $subtotal + (($detailBahan->bahan->harga ?? 0) * $detailBahan->jumlah_bahan);
+                }, 0);
+            }, 0);
+
+            $total = $totalProduk + $totalBahan;
 
             return (object)[
                 'id' => $tr->id_transaksi,
