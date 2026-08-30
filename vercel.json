@@ -22,6 +22,11 @@
         "APP_KEY": "base64:/6SoaTg9CkP0tY3J+dJBnqyKjOxeq8R8v98Cpq7Y/Uc=",
         "LARAVEL_STORAGE_PATH": "/tmp/storage",
         "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
+        "APP_SERVICES_CACHE": "/tmp/bootstrap/cache/services.php",
+        "APP_PACKAGES_CACHE": "/tmp/bootstrap/cache/packages.php",
+        "APP_CONFIG_CACHE": "/tmp/bootstrap/cache/config.php",
+        "APP_ROUTES_CACHE": "/tmp/bootstrap/cache/routes-v7.php",
+        "APP_EVENTS_CACHE": "/tmp/bootstrap/cache/events.php",
         "APP_MAINTENANCE_DRIVER": "file",
         "CACHE_STORE": "array",
         "CACHE_DRIVER": "array",
@@ -32,6 +37,7 @@
         "DB_PORT": "3307",
         "DB_DATABASE": "tenun_db_needledog",
         "DB_USERNAME": "tenun_db_needledog",
+        "DB_PASSWORD": "181ccda123d10f9c3bd2cd9603111e6af0846006",
         "FONNTE_TOKEN": "TWZNfHZc5W3RtKZSZu5V"
     }
 }

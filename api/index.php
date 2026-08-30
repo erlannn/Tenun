@@ -5,6 +5,8 @@ ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
 $storagePath = '/tmp/storage';
+$bootstrapCachePath = '/tmp/bootstrap/cache';
+
 $dirs = [
     $storagePath . '/app',
     $storagePath . '/app/public',
@@ -15,7 +17,7 @@ $dirs = [
     $storagePath . '/framework/views',
     $storagePath . '/logs',
     '/tmp/bootstrap',
-    '/tmp/bootstrap/cache',
+    $bootstrapCachePath,
 ];
 
 foreach ($dirs as $dir) {
@@ -24,6 +26,7 @@ foreach ($dirs as $dir) {
     }
 }
 
+// Storage paths
 putenv('LARAVEL_STORAGE_PATH=' . $storagePath);
 $_ENV['LARAVEL_STORAGE_PATH'] = $storagePath;
 $_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
@@ -31,6 +34,21 @@ $_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
 putenv('VIEW_COMPILED_PATH=' . $storagePath . '/framework/views');
 $_ENV['VIEW_COMPILED_PATH'] = $storagePath . '/framework/views';
 $_SERVER['VIEW_COMPILED_PATH'] = $storagePath . '/framework/views';
+
+// Cache paths for serverless read-only filesystem
+$cacheEnv = [
+    'APP_SERVICES_CACHE' => $bootstrapCachePath . '/services.php',
+    'APP_PACKAGES_CACHE' => $bootstrapCachePath . '/packages.php',
+    'APP_CONFIG_CACHE'   => $bootstrapCachePath . '/config.php',
+    'APP_ROUTES_CACHE'   => $bootstrapCachePath . '/routes-v7.php',
+    'APP_EVENTS_CACHE'   => $bootstrapCachePath . '/events.php',
+];
+
+foreach ($cacheEnv as $key => $val) {
+    putenv("{$key}={$val}");
+    $_ENV[$key] = $val;
+    $_SERVER[$key] = $val;
+}
 
 try {
     require __DIR__ . '/../public/index.php';
