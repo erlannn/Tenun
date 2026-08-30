@@ -60,6 +60,8 @@ $sessionEnv = [
     'SESSION_COOKIE'          => 'riskasulam_session',
     'SESSION_SECURE_COOKIE'   => 'true',
     'SESSION_SAME_SITE'       => 'lax',
+    'BCRYPT_ROUNDS'           => '12',
+    'HASH_DRIVER'             => 'bcrypt',
 ];
 
 foreach ($sessionEnv as $key => $val) {

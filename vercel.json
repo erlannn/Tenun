@@ -43,6 +43,7 @@
         "DB_DATABASE": "tenun_db_needledog",
         "DB_USERNAME": "tenun_db_needledog",
         "DB_PASSWORD": "181ccda123d10f9c3bd2cd9603111e6af0846006",
+        "BCRYPT_ROUNDS": "12",
         "FONNTE_TOKEN": "TWZNfHZc5W3RtKZSZu5V"
     }
 }
