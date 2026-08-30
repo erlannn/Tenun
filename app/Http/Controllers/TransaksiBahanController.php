@@ -35,7 +35,9 @@ class TransaksiBahanController extends Controller
                 })->implode(', ');
             })->implode(', ');
             $total = $tr->detailTransaksi->reduce(function ($carry, $dt) {
-                return $carry + ($dt->detailBahan->first()?->bahan->harga ?? 0) * $dt->detailBahan->first()?->jumlah_bahan;
+                return $carry + $dt->detailBahan->reduce(function ($subtotal, $db) {
+                    return $subtotal + (($db->bahan->harga ?? 0) * $db->jumlah_bahan);
+                }, 0);
             }, 0);
             return (object)[
                 'id' => $tr->id_transaksi,
@@ -207,16 +209,17 @@ class TransaksiBahanController extends Controller
         $transaksi = Transaksi::with(['pelanggan', 'detailTransaksi.detailBahan.bahan'])
             ->findOrFail($id);
 
-        // Build a simple collection for the view
-        $items = $transaksi->detailTransaksi->map(function ($dt) {
-            $b = $dt->detailBahan->first();
-            $bahan = $b->bahan ?? null;
-            return (object)[
-                'nama'   => $bahan->nm_bahan ?? 'Unknown',
-                'qty'    => $b->jumlah_bahan ?? 0,
-                'harga'  => $bahan->harga ?? 0,
-                'subtotal'=> ($bahan->harga ?? 0) * ($b->jumlah_bahan ?? 0),
-            ];
+        // Build a collection for the view including all bahan items
+        $items = $transaksi->detailTransaksi->flatMap(function ($dt) {
+            return $dt->detailBahan->map(function ($db) {
+                $bahan = $db->bahan ?? null;
+                return (object)[
+                    'nama'    => $bahan->nm_bahan ?? 'Unknown',
+                    'qty'     => $db->jumlah_bahan ?? 0,
+                    'harga'   => $bahan->harga ?? 0,
+                    'subtotal'=> ($bahan->harga ?? 0) * ($db->jumlah_bahan ?? 0),
+                ];
+            });
         });
 
         $total = $items->sum('subtotal');

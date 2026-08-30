@@ -17,30 +17,17 @@ class LaporanController extends Controller
 
         $query = $this->buildQuery($request);
 
-        // Hitung total untuk setiap transaksi berdasarkan jenis transaksi
-        $calculateTransactionTotal = function (Transaksi $transaksi): int {
-            if (strtolower($transaksi->jenis_transaksi ?? '') === 'preorder') {
-                return (int) $transaksi->detailTransaksi->sum(function ($detail) {
-                    return ($detail->produk->harga ?? 0) * ($detail->jumlah ?? 0);
-                });
-            }
-
-            return (int) $transaksi->detailTransaksi->sum(function ($detail) {
-                return $detail->detailBahan->sum(function ($detailBahan) {
-                    return ($detailBahan->bahan->harga ?? 0) * ($detailBahan->jumlah_bahan ?? 0);
-                });
-            });
-        };
-
         // Ambil data Utama dengan Pagination
         $transaksi = $query->orderBy('tanggal_pesan', 'desc')->paginate(10)->withQueryString();
-        $transaksi->getCollection()->transform(function ($item) use ($calculateTransactionTotal) {
-            $item->setAttribute('total_laporan', $calculateTransactionTotal($item));
+        $transaksi->getCollection()->transform(function ($item) {
+            $item->setAttribute('total_laporan', $this->calculateTransactionTotal($item));
             return $item;
         });
 
         // 4. Hitung Akumulasi Total Keseluruhan Berdasarkan Jenis Transaksi yang Sama
-        $total_keseluruhan = $query->get()->sum($calculateTransactionTotal);
+        $total_keseluruhan = $query->get()->sum(function ($item) {
+            return $this->calculateTransactionTotal($item);
+        });
 
         $sudah_filter = !empty($dari_tanggal) || !empty($sampai_tanggal) || !empty($jenis_transaksi) || !empty($cari);
         
@@ -53,22 +40,8 @@ class LaporanController extends Controller
 
         $transaksi = $query->orderBy('tanggal_pesan', 'desc')->get();
 
-        $calculateTransactionTotal = function (Transaksi $transaksi): int {
-            if (strtolower($transaksi->jenis_transaksi ?? '') === 'preorder') {
-                return (int) $transaksi->detailTransaksi->sum(function ($detail) {
-                    return ($detail->produk->harga ?? 0) * ($detail->jumlah ?? 0);
-                });
-            }
-
-            return (int) $transaksi->detailTransaksi->sum(function ($detail) {
-                return $detail->detailBahan->sum(function ($detailBahan) {
-                    return ($detailBahan->bahan->harga ?? 0) * ($detailBahan->jumlah_bahan ?? 0);
-                });
-            });
-        };
-
-        $transaksi->transform(function ($item) use ($calculateTransactionTotal) {
-            $item->setAttribute('total_laporan', $calculateTransactionTotal($item));
+        $transaksi->transform(function ($item) {
+            $item->setAttribute('total_laporan', $this->calculateTransactionTotal($item));
             return $item;
         });
 
@@ -86,6 +59,29 @@ class LaporanController extends Controller
         ]);
 
         return $pdf->download('laporan-transaksi.pdf');
+    }
+
+    protected function calculateTransactionTotal(Transaksi $transaksi): int
+    {
+        if (strtolower($transaksi->jenis_transaksi ?? '') === 'preorder') {
+            $totalProduk = (int) $transaksi->detailTransaksi->sum(function ($detail) {
+                return ($detail->produk->harga ?? 0) * ($detail->jumlah ?? 0);
+            });
+
+            $totalBahan = (int) $transaksi->detailTransaksi->sum(function ($detail) {
+                return $detail->detailBahan->sum(function ($detailBahan) {
+                    return ($detailBahan->bahan->harga ?? 0) * ($detailBahan->jumlah_bahan ?? 0);
+                });
+            });
+
+            return $totalProduk + $totalBahan;
+        }
+
+        return (int) $transaksi->detailTransaksi->sum(function ($detail) {
+            return $detail->detailBahan->sum(function ($detailBahan) {
+                return ($detailBahan->bahan->harga ?? 0) * ($detailBahan->jumlah_bahan ?? 0);
+            });
+        });
     }
 
     protected function buildQuery(Request $request)
