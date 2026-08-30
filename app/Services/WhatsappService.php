@@ -10,7 +10,7 @@ class WhatsappService
 
     public function __construct()
     {
-        $this->token = env('FONNTE_TOKEN');
+        $this->token = config('services.fonnte.token');
 
         // Warn if the Fonnte token is not set. WhatsApp notifications will be disabled.
         if (empty($this->token)) {
